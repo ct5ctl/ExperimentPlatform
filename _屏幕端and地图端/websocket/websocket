@@ -1,0 +1,28 @@
+import asyncio
+import json
+import websockets
+
+async def echo(websocket, path):
+    async for message in websocket:
+        try:
+            data = json.loads(message)
+            # 检查消息格式是否正确
+            if "eventName" in data and data["eventName"] == "eventValue" and "data" in data:
+                # 处理收到的数据
+                # 在这里可以将收到的经纬度数据存储、处理或者转发给其他地方
+                latitude, longitude, value = json.loads(data["data"])[0]
+                print(f"Received coordinates: Latitude {latitude}, Longitude {longitude}, Value {value}")
+                
+                # 这里可以添加自定义的处理逻辑，例如向其他客户端广播消息
+                # await broadcast_new_coordinates(latitude, longitude, value)
+            else:
+                # 消息格式不正确，发送错误消息
+                await websocket.send("Invalid message format")
+        except Exception as e:
+            print(f"Error processing message: {str(e)}")
+            await websocket.send("Error processing message")
+
+start_server = websockets.serve(echo, "localhost", 8765)
+
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()
