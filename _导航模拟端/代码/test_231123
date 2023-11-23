@@ -1,0 +1,30 @@
+import asyncio
+import websockets
+import json
+
+
+
+
+async def send_coordinates(websocket, path):
+    initial_position = [0, 0, 0]
+    z_coordinate = 0
+
+    while True:
+        # Incrementing the z-coordinate by 1 every second
+        z_coordinate += 1
+        current_position = initial_position.copy()
+        current_position[2] = z_coordinate
+
+        message = {
+            "eventName": "eventValue",
+            "data": json.dumps(current_position)
+        }
+
+        await websocket.send(json.dumps(message))
+        await asyncio.sleep(1)  # Sending coordinates every second
+        print(str(current_position))
+
+start_server = websockets.serve(send_coordinates, 'localhost', 8765)
+
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()

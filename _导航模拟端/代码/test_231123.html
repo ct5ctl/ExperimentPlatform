@@ -1,0 +1,18 @@
+const ws = new WebSocket('ws://localhost:8765');
+
+ws.onopen = () => {
+  console.log('Connected to the WebSocket server');
+};
+
+ws.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+  console.log('Received coordinates:', message.data);
+};
+
+ws.onerror = (error) => {
+  console.error('WebSocket error:', error);
+};
+
+ws.onclose = () => {
+  console.log('Connection closed');
+};
