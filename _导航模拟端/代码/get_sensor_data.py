@@ -1,6 +1,11 @@
 import time
 import requests
 
+time_slot = 0.1
+
+def get_initial_pos():
+    return [0,0,0]
+
 def get_sensor_data():
     url = "http://192.168.8.125:9001/api/ipc/channel/getIpcLog"
 
@@ -48,7 +53,7 @@ def map_degree(steering_wheel_angle):
 
     return mapped_angle
 
-def process_sensor_data(sensor_data):
+def process_sensor_data(sensor_data, last_moment_pos):
     if sensor_data:
         steering_wheel_direction = sensor_data['info']['SteeringWheelDirection']
         steering_wheel_angle = sensor_data['info']['SteeringWheelAngle']
@@ -64,19 +69,27 @@ def process_sensor_data(sensor_data):
         print("刹车深度:", brake_depth)
         print("速度:", speed)
         print("车门状态:", door_status)
-
+        
         #方向角度换算
         wheel_angle = map_degree(steering_wheel_angle)
+        #获取车辆当前位置（位置偏移+上一时刻位置）
+        pos_offset = pos_offset_calculation(speed, wheel_angle)
+        pos = last_moment_pos + 
 
         #计算该时刻车辆位置
     else:
         print("未能获取传感器数据")
 
 # 主循环
+first_iteration = True
 while True:
-    # sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
-    # process_sensor_data(sensor_data)  # 处理传感器数据
-    mapped_angle = map_degree(10)
-    print(str( mapped_angle))
+    if first_iteration:
+        # 获取车辆初始位置
+        initial_pos = get_initial_pos()
+        last_moment_pos = initial_pos
+        first_iteration = False
+    else:
+        sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
+        process_sensor_data(sensor_data, last_moment_pos)  # 处理传感器数据
 
-    time.sleep(0.1)  # 等待100ms
+        time.sleep(time_slot)  # 等待100ms
