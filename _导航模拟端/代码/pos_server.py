@@ -119,13 +119,14 @@ async def notify_clients(pos_current):
         }
         await asyncio.wait([client.send(json.dumps(message)) for client in connected_clients])
 
-def websocket_send_data(pos_current):
-    asyncio.get_event_loop().run_until_complete(notify_clients(pos_current))
+async def websocket_send_data(pos_current):
+    # asyncio.get_event_loop().run_until_complete(notify_clients(pos_current))  #同步方式
+    await notify_clients(pos_current)
     
 
 
 # 处理传感器数据，并发送结果（当前位置、航向角）
-def process_sensor_data(sensor_data, last_moment_pos, last_moment_theta):
+async def process_sensor_data(sensor_data, last_moment_pos, last_moment_theta):
     if sensor_data:
         steering_wheel_direction = sensor_data['info']['SteeringWheelDirection']
         steering_wheel_angle = sensor_data['info']['SteeringWheelAngle']
@@ -147,32 +148,34 @@ def process_sensor_data(sensor_data, last_moment_pos, last_moment_theta):
         #获取车辆当前位置、航向角（位置偏移+上一时刻位置）
         pos_current, theta_current = pos_calculation(speed, wheel_angle, last_moment_pos, last_moment_theta)
         # 将位置数据发送给 WebSocket 客户端
-        websocket_send_data(pos_current)
+        # websocket_send_data(pos_current)
+        await notify_clients(pos_current)
         return pos_current, theta_current
     else:
         print("未能获取传感器数据")
 
 
-# 主循环
-first_iteration = True
-# 启动 WebSocket 服务器
-start_server = websockets.serve(websocket_handler, "localhost", 8765)  # 将 "localhost" 替换为你的服务器 IP
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
-while True:
-    if first_iteration:
-        # 获取车辆初始位置
-        initial_pos, initial_theta = get_initial_pos_theta()
-        last_moment_pos = initial_pos
-        last_moment_theta = initial_theta
-        first_iteration = False
-    else:
-        sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
-        last_moment_pos, last_moment_theta = process_sensor_data(sensor_data, last_moment_pos, last_moment_theta)  # 处理传感器数据
+async def main():
+    # 主循环
+    first_iteration = True
+    # 启动 WebSocket 服务器
+    start_server = websockets.serve(websocket_handler, "localhost", 8765)  # 将 "localhost" 替换为你的服务器 IP
+    asyncio.get_event_loop().run_until_complete(start_server)
+    asyncio.get_event_loop().run_forever()
+    while True:
+        if first_iteration:
+            # 获取车辆初始位置
+            initial_pos, initial_theta = get_initial_pos_theta()
+            last_moment_pos = initial_pos
+            last_moment_theta = initial_theta
+            first_iteration = False
+        else:
+            sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
+            last_moment_pos, last_moment_theta = await process_sensor_data(sensor_data, last_moment_pos, last_moment_theta)  # 处理传感器数据
 
-        time.sleep(time_slot)  # 等待100ms
+            time.sleep(time_slot)  # 等待100ms
 
 
-    # # test
-    # initial_pos, initial_theta = get_initial_pos_theta()
-    # pos_calculation(1, 10, initial_pos, initial_theta)
+        # # test
+        # initial_pos, initial_theta = get_initial_pos_theta()
+        # pos_calculation(1, 10, initial_pos, initial_theta)
