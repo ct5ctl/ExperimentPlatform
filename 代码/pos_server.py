@@ -148,8 +148,8 @@ async def process_sensor_data(sensor_data, last_moment_pos, last_moment_theta):
         #获取车辆当前位置、航向角（位置偏移+上一时刻位置）
         pos_current, theta_current = pos_calculation(speed, wheel_angle, last_moment_pos, last_moment_theta)
         # 将位置数据发送给 WebSocket 客户端
-        # websocket_send_data(pos_current)
-        await notify_clients(pos_current)
+        # websocket_send_data(pos_current)  # 同步
+        await notify_clients(pos_current)   # 异步
         return pos_current, theta_current
     else:
         print("未能获取传感器数据")
