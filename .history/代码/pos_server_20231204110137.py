@@ -68,7 +68,7 @@ def pos_calculation(speed, wheel_angle, last_moment_pos, last_moment_theta):
 # 从泽鹿服务器的网页接口获取传感器数据
 def get_sensor_data():
     # url = "http://192.168.8.125:9001/api/ipc/channel/getIpcLog"
-    url = "http://192.168.31.123:9117/api"
+    url = "http://172.0.0.1:9117/api"
     print("请求地址:", url)
 
 
@@ -194,8 +194,8 @@ async def websocket_handler(websocket, path):
 # 主循环
 while True:
     sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
-    # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
-    process_sensor_data(sensor_data, vehicle_data)  # 处理传感器数据
+    print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
+    last_moment_pos, last_moment_theta = process_sensor_data(sensor_data, vehicle_data)  # 处理传感器数据
 
     time.sleep(time_slot)  # 等待100ms
 

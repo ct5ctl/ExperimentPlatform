@@ -68,7 +68,7 @@ def pos_calculation(speed, wheel_angle, last_moment_pos, last_moment_theta):
 # 从泽鹿服务器的网页接口获取传感器数据
 def get_sensor_data():
     # url = "http://192.168.8.125:9001/api/ipc/channel/getIpcLog"
-    url = "http://192.168.31.123:9117/api"
+    url = "http://172.0.0.1:9117/api"
     print("请求地址:", url)
 
 
