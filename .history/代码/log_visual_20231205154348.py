@@ -17,9 +17,6 @@ with open(file_path, 'r') as file:
 positions = [d['pos'] for d in data]
 thetas = [d['theta'] for d in data]
 
-print('positions: ', positions)
-print('thetas: ', thetas)
-
 # 绘制轨迹图
 plt.figure(figsize=(8, 6))
 x = [pos[0] for pos in positions]
