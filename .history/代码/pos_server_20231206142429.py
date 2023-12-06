@@ -275,16 +275,11 @@ async def websocket_handler(websocket, path):
 
 
 
-# # 启动WebSocket服务器
-# start_server = websockets.serve(websocket_handler, "0.0.0.0", 8765)  # 替换为你的服务器IP和端口
-# asyncio.get_event_loop().run_until_complete(start_server)
-# asyncio.get_event_loop().run_forever()
-
-async def start_websocket_server():
-    async with websockets.serve(websocket_handler, "0.0.0.0", 8765) as websocket_server:
-        await websocket_server.wait_closed()
-
-asyncio.run(start_websocket_server())
+# 启动WebSocket服务器
+start_server = websockets.serve(websocket_handler, "0.0.0.0", 8765)  # 替换为你的服务器IP和端口
+asyncio.get_event_loop().run_until_complete(start_server)
+print("WebSocket服务器已启动")
+asyncio.get_event_loop().run_forever()
 print("WebSocket服务器已启动")
 
 # 主循环
