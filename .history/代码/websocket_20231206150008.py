@@ -6,8 +6,8 @@ from pos_server import vehicle_data
 async def send_message(websocket):
     while True:
         # 获取当前位置和朝向
-        pos_current = vehicle_data.get_pos_current()
-        theta_current = vehicle_data.get_theta_current()
+        pos_current = pos_server.vehicle_data.get_pos_current()
+        theta_current = pos_server.vehicle_data.get_theta_current()
         message = {
             "eventName": "eventValue",
             "data": f'[[{pos_current[0]},{pos_current[1]},{pos_current[2]}]]'

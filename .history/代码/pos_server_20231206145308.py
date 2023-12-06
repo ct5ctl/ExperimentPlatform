@@ -9,9 +9,9 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 
-
+# ti
 time_slot = 0.1
-# 车辆数据类
+
 class VehicleData:
     def __init__(self):
         self.pos_current = [ 116.38553266, 39.90440998, 0 ]  # 初始化为默认值
@@ -106,10 +106,9 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
 
     return next_pos, next_theta
 
-# 使用泽鹿网页接口获取传感器数据
 def get_query_id():
     query_id_url = "https://192.168.8.125:9001/api/ipc/channel/calibrationSend?type=F6"
-    print("请求queryId地址1111:", query_id_url)
+    print("请求queryId地址:", query_id_url)
 
     try:
         response = requests.get(query_id_url, verify=False)
@@ -229,6 +228,55 @@ def process_sensor_data(sensor_data, vehicle_data):
         print("未能获取传感器数据")
 
 
+
+
+# async def websocket_handler(websocket, path):
+#     while True:
+#         # 假设你有一种方法来获取pos_current和theta_current的数值
+#         pos_current = vehicle_data.get_pos_current
+        
+#         # 创建符合要求格式的消息
+#         message = {
+#             "eventName": "eventValue",
+#             "data": f'[[{pos_current[0]},{pos_current[1]},{pos_current[2]}]]'
+#         }
+        
+#         # 发送消息给WebSocket客户端
+#         await websocket.send(json.dumps(message))
+        
+#         # 根据需要调整此处的休眠时间
+#         await asyncio.sleep(0.1)  # 每100毫秒发送一次数据
+
+
+
+# # 启动WebSocket服务器
+# start_server = websockets.serve(websocket_handler, "0.0.0.0", 8765)  # 替换为你的服务器IP和端口
+# asyncio.get_event_loop().run_until_complete(start_server)
+# asyncio.get_event_loop().run_forever()
+
+# async def start_websocket_server():
+#     async with websockets.serve(websocket_handler, "0.0.0.0", 8765) as websocket_server:
+#         await websocket_server.wait_closed()
+
+# asyncio.run(start_websocket_server())
+# print("WebSocket服务器已启动")
+
+# 主循环
+# first_iteration = True
+# while True:
+#     if first_iteration:
+#         # 获取车辆初始位置
+#         vehicle_data = VehicleData()
+#         # initial_pos, initial_theta = get_initial_pos_theta()
+#         # last_moment_pos = initial_pos
+#         # last_moment_theta = initial_theta
+#         first_iteration = False
+#     else:
+#         sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
+#         print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
+#         last_moment_pos, last_moment_theta = process_sensor_data(sensor_data, vehicle_data)  # 处理传感器数据
+
+#         time.sleep(time_slot)  # 等待100ms
 
 # 抑制不安全请求的警告
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)

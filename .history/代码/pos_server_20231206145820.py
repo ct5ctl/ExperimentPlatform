@@ -109,7 +109,7 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
 # 使用泽鹿网页接口获取传感器数据
 def get_query_id():
     query_id_url = "https://192.168.8.125:9001/api/ipc/channel/calibrationSend?type=F6"
-    print("请求queryId地址1111:", query_id_url)
+    print("请求queryId地址1:", query_id_url)
 
     try:
         response = requests.get(query_id_url, verify=False)
