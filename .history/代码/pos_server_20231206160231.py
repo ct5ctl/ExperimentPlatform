@@ -218,15 +218,7 @@ def process_sensor_data(sensor_data, vehicle_data):
         print("theta_current:", theta_current)
         # 更新 VehicleData 实例中的数据
         vehicle_data.update_data(pos_current, theta_current)
-
-        # debug
-        # print("vehicle_data_pos: " + str(vehicle_data.get_pos_current()) + "vehicle_data_theta: " + vehicle_data.get_theta_current())
-        # 获取当前时间戳
-        current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
-        # 构建日志文件名
-        log_file = f'log_vehicledata_{current_time}.txt'
-        with open(log_file, 'a') as file:
-            file.write(f"pos_current: {vehicle_data.get_pos_current()}, theta_current: {vehicle_data.get_theta_current()}\n")
+        print(“vehicle_data.get_pos_current(), vehicle_data.get_theta_current())
 
         # Write data to a log file
         with open(log_file, 'a') as file:

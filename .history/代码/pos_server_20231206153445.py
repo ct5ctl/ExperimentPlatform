@@ -35,7 +35,7 @@ vehicle_data = VehicleData()
 #     initial_theta = 270
 #     return initial_pos, initial_theta
 
-# 计算航向角    
+# 计算航向角
 def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base):
     # 转换为弧度
     wheel_angle_rad = math.radians(wheel_angle)
@@ -219,15 +219,6 @@ def process_sensor_data(sensor_data, vehicle_data):
         # 更新 VehicleData 实例中的数据
         vehicle_data.update_data(pos_current, theta_current)
 
-        # debug
-        # print("vehicle_data_pos: " + str(vehicle_data.get_pos_current()) + "vehicle_data_theta: " + vehicle_data.get_theta_current())
-        # 获取当前时间戳
-        current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
-        # 构建日志文件名
-        log_file = f'log_vehicledata_{current_time}.txt'
-        with open(log_file, 'a') as file:
-            file.write(f"pos_current: {vehicle_data.get_pos_current()}, theta_current: {vehicle_data.get_theta_current()}\n")
-
         # Write data to a log file
         with open(log_file, 'a') as file:
             file.write(f"pos_current: {pos_current}, theta_current: {theta_current}, speed: {speed}, wheel_angle: {wheel_angle}, steering_wheel_angle: {steering_wheel_angle}\n")
@@ -239,27 +230,27 @@ def process_sensor_data(sensor_data, vehicle_data):
 
 
 if __name__ == '__main__':
-    # 抑制不安全请求的警告
-    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-    # 获取当前时间戳
-    current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
-    # 构建日志文件名
-    log_file = f'log_{current_time}.txt'
-    # 主循环
-    while True:
-        sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
-        # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
-        print("传感器数据:", sensor_data)
-        process_sensor_data(sensor_data, vehicle_data)  # 处理传感器数据
+# 抑制不安全请求的警告
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+# 获取当前时间戳
+current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
+# 构建日志文件名
+log_file = f'log_{current_time}.txt'
+# 主循环
+while True:
+    sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
+    # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
+    print("传感器数据:", sensor_data)
+    process_sensor_data(sensor_data, vehicle_data)  # 处理传感器数据
 
-        time.sleep(time_slot)  # 等待100ms
+    time.sleep(time_slot)  # 等待100ms
 
 
-        # # test
-        # initial_pos, initial_theta = get_initial_pos_theta()
-        # pos_calculation(1, 10, initial_pos, initial_theta)
-        
-        # # 测试获取传感器数据
-        # sensor_data = get_sensor_data()
-        # if sensor_data:
-        #     print("传感器数据:", sensor_data)
+    # # test
+    # initial_pos, initial_theta = get_initial_pos_theta()
+    # pos_calculation(1, 10, initial_pos, initial_theta)
+    
+    # # 测试获取传感器数据
+    # sensor_data = get_sensor_data()
+    # if sensor_data:
+    #     print("传感器数据:", sensor_data)

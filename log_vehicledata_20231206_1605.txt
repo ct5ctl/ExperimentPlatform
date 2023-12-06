@@ -1,0 +1,80 @@
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.5, steering_wheel_angle: -115
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.7, steering_wheel_angle: -117
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.7, steering_wheel_angle: -117
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.7, steering_wheel_angle: -117
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.7, steering_wheel_angle: -117
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.899999999999999, steering_wheel_angle: -119
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.7, steering_wheel_angle: -117
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.3, steering_wheel_angle: -113
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -10.899999999999999, steering_wheel_angle: -109
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -10.5, steering_wheel_angle: -105
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -10.7, steering_wheel_angle: -107
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.100000000000001, steering_wheel_angle: -111
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.7, steering_wheel_angle: -117
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.7, steering_wheel_angle: -117
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -11.7, steering_wheel_angle: -117
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0
+pos_current: [116.38553266, 39.90440998, 0], theta_current: 270.0, speed: 0.00, wheel_angle: -10.7, steering_wheel_angle: -107
+pos_current: [116.38553262713879, 39.903409980000724, 0], theta_current: 269.99623438263325
+pos_current: [116.38553262713879, 39.903409980000724, 0], theta_current: 269.99623438263325, speed: 0.01, wheel_angle: -10.7, steering_wheel_angle: -107
+pos_current: [116.38553252855516, 39.902409980005764, 0], theta_current: 269.9924687652665
+pos_current: [116.38553252855516, 39.902409980005764, 0], theta_current: 269.9924687652665, speed: 0.01, wheel_angle: -10.7, steering_wheel_angle: -107
+pos_current: [116.30665185179234, 38.357089429705944, 0], theta_current: 264.1632930814619
+pos_current: [116.30665185179234, 38.357089429705944, 0], theta_current: 264.1632930814619, speed: 15.48, wheel_angle: -10.7, steering_wheel_angle: -107
+pos_current: [116.03656689325024, 36.66440914388099, 0], theta_current: 257.7052592974019
+pos_current: [116.03656689325024, 36.66440914388099, 0], theta_current: 257.7052592974019, speed: 17.15, wheel_angle: -10.7, steering_wheel_angle: -107

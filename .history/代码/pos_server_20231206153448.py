@@ -35,7 +35,7 @@ vehicle_data = VehicleData()
 #     initial_theta = 270
 #     return initial_pos, initial_theta
 
-# 计算航向角    
+# 计算航向角
 def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base):
     # 转换为弧度
     wheel_angle_rad = math.radians(wheel_angle)
@@ -218,15 +218,6 @@ def process_sensor_data(sensor_data, vehicle_data):
         print("theta_current:", theta_current)
         # 更新 VehicleData 实例中的数据
         vehicle_data.update_data(pos_current, theta_current)
-
-        # debug
-        # print("vehicle_data_pos: " + str(vehicle_data.get_pos_current()) + "vehicle_data_theta: " + vehicle_data.get_theta_current())
-        # 获取当前时间戳
-        current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
-        # 构建日志文件名
-        log_file = f'log_vehicledata_{current_time}.txt'
-        with open(log_file, 'a') as file:
-            file.write(f"pos_current: {vehicle_data.get_pos_current()}, theta_current: {vehicle_data.get_theta_current()}\n")
 
         # Write data to a log file
         with open(log_file, 'a') as file:
