@@ -54,7 +54,7 @@ async def echo(websocket, path):
 
 # 设置服务器 IP 地址和端口号
 # start_server = websockets.serve(echo, "127.0.0.1", 18765)
-start_server = websockets.serve(echo, "192.168.229.125", 61111)
+# start_server = websockets.serve(echo, "192.168.229.125", 61111)
 
 
 # 启动服务器
