@@ -36,7 +36,7 @@ async def send_message(websocket):
 
         # 发送消息给客户端
         # await websocket.send(str(message))
-        await websocket.send(str(message))
+        await websocket.send(message))
 
         # 等待一段时间再发送下一条消息
         await asyncio.sleep(5)  # 100ms
