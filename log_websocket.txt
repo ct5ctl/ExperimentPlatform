@@ -2142,3 +2142,28 @@ pos_current: [0, 0, 1], theta_current: 270
 pos_current: [0, 0, 1], theta_current: 270
 pos_current: [0, 0, 1], theta_current: 270
 pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [0, 0, 1], theta_current: 270
+pos_current: [[0, 0, 1], [0, 0, 1], [0, 0, 1]], theta_current: 270
+pos_current: [[0, 0, 1], [0, 0, 1], [0, 0, 1]], theta_current: 270
+pos_current: [[0, 0, 1], [0, 0, 1], [0, 0, 1]], theta_current: 270
+pos_current: [[0, 0, 1], [0, 0, 1], [0, 0, 1]], theta_current: 270

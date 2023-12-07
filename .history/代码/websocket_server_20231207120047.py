@@ -25,7 +25,7 @@ async def send_message(websocket):
         # }
         message = {
             "eventName": "eventValue",
-            "data": pos_current  # Convert set to list here
+            "data": [list(pos_current)]  # Convert set to list here
         }
         print('message: ', message)
         print("message type:", type(json.dumps(message)))

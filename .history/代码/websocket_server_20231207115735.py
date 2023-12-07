@@ -25,10 +25,10 @@ async def send_message(websocket):
         # }
         message = {
             "eventName": "eventValue",
-            "data": pos_current  # Convert set to list here
+            "data": [list(pos_current)]  # Convert set to list here
         }
         print('message: ', message)
-        print("message type:", type(json.dumps(message)))
+        print
 
         # ####### test
         # pos_current[0] += 1
@@ -53,8 +53,8 @@ async def echo(websocket, path):
         pass
 
 # 设置服务器 IP 地址和端口号
-start_server = websockets.serve(echo, "127.0.0.1", 18765)
-# start_server = websockets.serve(echo, "192.168.229.125", 61111)
+# start_server = websockets.serve(echo, "127.0.0.1", 18765)
+start_server = websockets.serve(echo, "192.168.229.125", 61111)
 
 
 # 启动服务器

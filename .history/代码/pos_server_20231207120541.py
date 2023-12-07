@@ -17,7 +17,7 @@ class VehicleData:
     def __init__(self):
         # self.pos_current = [ 116.38553266, 39.90440998, 0 ]  # 初始化为默认值
         # self.theta_current = 270  # 初始化为默认值
-        self.pos_current = [[ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 0, 1 ]]  # 初始化为默认值
+        self.pos_current = [ 0, 0, 1 ]，  # 初始化为默认值
         self.theta_current = 270  # 初始化为默认值
 
     def update_data(self, pos, theta):
