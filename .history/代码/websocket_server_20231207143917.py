@@ -40,7 +40,7 @@ async def send_message(websocket):
         await websocket.send(json.dumps(message))
 
         # 等待一段时间再发送下一条消息
-        await asyncio.sleep(0.1)  # 100ms
+        await asyncio.sleep(0.)  # 100ms
 
 async def echo(websocket, path):
     # 启动发送消息的任务
