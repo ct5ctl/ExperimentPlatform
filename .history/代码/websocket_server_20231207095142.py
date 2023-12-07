@@ -24,9 +24,9 @@ async def send_message(websocket):
             "data": f'[[{pos_current[0]},{pos_current[1]},{pos_current[2]}]]'
         }
 
-        # ####### test
-        # pos_current[0] += 1
-        # vehicle_data.update_data(pos_current, theta_current)
+        ## test
+        pos_current[0] += 1
+        vehicle_data.update_data(pos_current, theta_current)
 
 
         # 发送消息给客户端
@@ -47,7 +47,7 @@ async def echo(websocket, path):
         pass
 
 # 设置服务器 IP 地址和端口号
-# start_server = websockets.serve(echo, "127.0.0.1", 18765)
+# start_server = websockets.serve(echo, "127.0.0.1", 8765)
 start_server = websockets.serve(echo, "192.168.8.125", 61111)
 
 

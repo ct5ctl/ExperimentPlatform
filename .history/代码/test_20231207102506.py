@@ -19,13 +19,13 @@ class VehicleData:
 
 if __name__ == '__main__':
     with Manager() as manager:
-        shared_vehicle_data = manager.Namespace()
-        vehicle_data = VehicleData()
+    shared_vehicle_data = manager.Namespace()
+    vehicle_data = VehicleData()
 
-        # 将VehicleData实例存储在共享对象中
-        shared_vehicle_data.instance = vehicle_data
-        a = [0, 0, 0]
-        while True:
-            a[0] += 1
-            vehicle_data.update_data(a, 0)
-            print(str(vehicle_data.get_pos_current()))
+    # 将VehicleData实例存储在共享对象中
+    shared_vehicle_data.instance = vehicle_data
+    a = [0, 0, 0]
+    while True:
+        a[0] += 1
+        data.update_data(a, 0)
+        print(str(data.get_pos_current()))

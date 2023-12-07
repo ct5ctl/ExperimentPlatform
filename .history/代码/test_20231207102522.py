@@ -27,5 +27,5 @@ if __name__ == '__main__':
         a = [0, 0, 0]
         while True:
             a[0] += 1
-            vehicle_data.update_data(a, 0)
-            print(str(vehicle_data.get_pos_current()))
+            data.update_data(a, 0)
+            print(str(data.get_pos_current()))

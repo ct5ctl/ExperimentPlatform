@@ -47,7 +47,7 @@ async def echo(websocket, path):
         pass
 
 # 设置服务器 IP 地址和端口号
-# start_server = websockets.serve(echo, "127.0.0.1", 18765)
+start_server = websockets.serve(echo, "127.0.0.1", 8765)
 start_server = websockets.serve(echo, "192.168.8.125", 61111)
 
 

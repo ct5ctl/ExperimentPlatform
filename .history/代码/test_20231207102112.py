@@ -1,4 +1,4 @@
-from multiprocessing import Manager
+
 # 车辆数据类
 class VehicleData:
     def __init__(self):
@@ -15,17 +15,11 @@ class VehicleData:
     def get_theta_current(self):
         return self.theta_current
     
-
+data = VehicleData()
 
 if __name__ == '__main__':
-    with Manager() as manager:
-        shared_vehicle_data = manager.Namespace()
-        vehicle_data = VehicleData()
-
-        # 将VehicleData实例存储在共享对象中
-        shared_vehicle_data.instance = vehicle_data
-        a = [0, 0, 0]
-        while True:
-            a[0] += 1
-            vehicle_data.update_data(a, 0)
-            print(str(vehicle_data.get_pos_current()))
+    a = [0, 0, 0]
+    while True:
+        a[0] += 1
+        data.update_data(a, 0)
+        print(str(data.get_pos_current()))

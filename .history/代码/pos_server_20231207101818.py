@@ -15,9 +15,7 @@ time_slot = 0.1
 # 车辆数据类
 class VehicleData:
     def __init__(self):
-        # self.pos_current = [ 116.38553266, 39.90440998, 0 ]  # 初始化为默认值
-        # self.theta_current = 270  # 初始化为默认值
-        self.pos_current = [ 0, 0, 1 ]  # 初始化为默认值
+        self.pos_current = [ 116.38553266, 39.90440998, 0 ]  # 初始化为默认值
         self.theta_current = 270  # 初始化为默认值
 
     def update_data(self, pos, theta):
@@ -30,13 +28,6 @@ class VehicleData:
     def get_theta_current(self):
         return self.theta_current
     
-# # 共享对象
-# with Manager() as manager:
-#     shared_vehicle_data = manager.Namespace()
-#     vehicle_data = VehicleData()
-
-#     # 将VehicleData实例存储在共享对象中
-#     shared_vehicle_data.instance = vehicle_data
 vehicle_data = VehicleData()
 
 # def get_initial_pos_theta():

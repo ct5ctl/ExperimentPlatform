@@ -30,13 +30,13 @@ class VehicleData:
     def get_theta_current(self):
         return self.theta_current
     
-# # 共享对象
-# with Manager() as manager:
-#     shared_vehicle_data = manager.Namespace()
-#     vehicle_data = VehicleData()
+# 共享对象
+with Manager() as manager:
+    shared_vehicle_data = manager.Namespace()
+    vehicle_data = VehicleData()
 
-#     # 将VehicleData实例存储在共享对象中
-#     shared_vehicle_data.instance = vehicle_data
+    # 将VehicleData实例存储在共享对象中
+    shared_vehicle_data.instance = vehicle_data
 vehicle_data = VehicleData()
 
 # def get_initial_pos_theta():
