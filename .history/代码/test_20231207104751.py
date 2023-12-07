@@ -25,7 +25,6 @@ if __name__ == '__main__':
     #     # 将VehicleData实例存储在共享对象中
     #     shared_vehicle_data.instance = vehicle_data
     vehicle_data = VehicleData()
-    
     # 创建一个共享内存块
     pos_shm = shared_memory.SharedMemory(create=True, size=pos_current.nbytes)
 

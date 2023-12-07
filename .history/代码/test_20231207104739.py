@@ -25,14 +25,6 @@ if __name__ == '__main__':
     #     # 将VehicleData实例存储在共享对象中
     #     shared_vehicle_data.instance = vehicle_data
     vehicle_data = VehicleData()
-    
-    # 创建一个共享内存块
-    pos_shm = shared_memory.SharedMemory(create=True, size=pos_current.nbytes)
-
-    # 将数据复制到共享内存块
-    shared_pos_current = np.ndarray(pos_current.shape, dtype=pos_current.dtype, buffer=pos_shm.buf)
-    shared_pos_current[:] = pos_current[:]
-
     a = [0, 0, 0]
     while True:
         a[0] += 1
