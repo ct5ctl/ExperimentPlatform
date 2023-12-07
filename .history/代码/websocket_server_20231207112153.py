@@ -19,15 +19,10 @@ async def send_message(websocket):
         with open(log_file, 'a') as file:
             file.write(f"pos_current: {pos_current}, theta_current: {theta_current}\n")
 
-        # message = {
-        #     "eventName": "eventValue",
-        #     "data": f'[[{pos_current[0]},{pos_current[1]},{pos_current[2]}]]'
-        # }
         message = {
             "eventName": "eventValue",
-            "data": [list(pos_current)]  # Convert set to list here
+            "data": [[{pos_current[0]},{pos_current[1]},{pos_current[2]}]]'
         }
-
 
         # ####### test
         # pos_current[0] += 1

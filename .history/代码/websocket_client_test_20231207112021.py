@@ -9,7 +9,7 @@ async def receive_message():
         while True:
             try:
                 message = await websocket.recv()
-                print(str(message))
+                print(f"Received message: {message}")
             except websockets.exceptions.ConnectionClosedOK:
                 print("Connection closed")
                 break

@@ -23,11 +23,6 @@ async def send_message(websocket):
         #     "eventName": "eventValue",
         #     "data": f'[[{pos_current[0]},{pos_current[1]},{pos_current[2]}]]'
         # }
-        message = {
-            "eventName": "eventValue",
-            "data": [list(pos_current)]  # Convert set to list here
-        }
-
 
         # ####### test
         # pos_current[0] += 1
