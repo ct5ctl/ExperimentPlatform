@@ -36,7 +36,7 @@ async def send_message(websocket):
 
         # 发送消息给客户端
         # await websocket.send(str(message))
-        await websocket.send(json.dumps(message))
+        await websocket.send(message)
 
         # 等待一段时间再发送下一条消息
         await asyncio.sleep(5)  # 100ms
@@ -52,8 +52,8 @@ async def echo(websocket, path):
         pass
 
 # 设置服务器 IP 地址和端口号
-# start_server = websockets.serve(echo, "127.0.0.1", 18765)
-start_server = websockets.serve(echo, "192.168.229.125", 61111)
+start_server = websockets.serve(echo, "127.0.0.1", 18765)
+# start_server = websockets.serve(echo, "192.168.229.125", 61111)
 
 
 # 启动服务器
