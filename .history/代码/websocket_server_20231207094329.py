@@ -24,11 +24,7 @@ async def send_message(websocket):
             "data": f'[[{pos_current[0]},{pos_current[1]},{pos_current[2]}]]'
         }
 
-        # test
-        pos_current[0] += 1
-        vehicle_data.update_data(pos_current, theta_current)
-
-
+        
         # 发送消息给客户端
         # await websocket.send(str(message))
         await websocket.send(json.dumps(message))

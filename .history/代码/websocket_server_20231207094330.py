@@ -25,10 +25,10 @@ async def send_message(websocket):
         }
 
         # test
-        pos_current[0] += 1
-        vehicle_data.update_data(pos_current, theta_current)
+        
+        vehicle_data.update_data()
 
-
+        
         # 发送消息给客户端
         # await websocket.send(str(message))
         await websocket.send(json.dumps(message))
