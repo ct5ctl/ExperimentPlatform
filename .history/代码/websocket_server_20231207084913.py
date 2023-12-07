@@ -12,6 +12,8 @@ async def send_message(websocket):
         print('pos_current: ', pos_current)
         theta_current = vehicle_data.get_theta_current()
 
+        # 获取当前时间戳
+        current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
         # 构建日志文件名
         log_file = f'log_websocket.txt'
         with open(log_file, 'a') as file:
@@ -40,8 +42,8 @@ async def echo(websocket, path):
         pass
 
 # 设置服务器 IP 地址和端口号
-# start_server = websockets.serve(echo, "127.0.0.1", 8765)
-start_server = websockets.serve(echo, "192.168.8.125", 61111)
+start_server = websockets.serve(echo, "127.0.0.1", 8765)
+# start_server = websockets.serve(echo, "192.168.8.125", 8765)
 
 
 # 启动服务器

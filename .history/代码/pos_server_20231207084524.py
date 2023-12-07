@@ -222,7 +222,8 @@ def process_sensor_data(sensor_data, vehicle_data):
         # debug
         # print("vehicle_data_pos: " + str(vehicle_data.get_pos_current()) + "vehicle_data_theta: " + vehicle_data.get_theta_current())
         # 构建日志文件名
-        with open(f'log_vehicledata.txt', 'a') as file:
+        log_file = f'log_vehicledata.txt'
+        with open(log_file, 'a') as file:
             file.write(f"pos_current: {vehicle_data.get_pos_current()}, theta_current: {vehicle_data.get_theta_current()}\n")
 
         # Write data to a log file
@@ -235,28 +236,28 @@ def process_sensor_data(sensor_data, vehicle_data):
         print("未能获取传感器数据")
 
 
-# if __name__ == '__main__':
-# 抑制不安全请求的警告
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-# 获取当前时间戳
-current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
-# 构建日志文件名
-log_file = f'log_{current_time}.txt'
-# 主循环
-while True:
-    sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
-    # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
-    print("传感器数据:", sensor_data)
-    process_sensor_data(sensor_data, vehicle_data)  # 处理传感器数据
+if __name__ == '__main__':
+    # 抑制不安全请求的警告
+    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+    # 获取当前时间戳
+    current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
+    # 构建日志文件名
+    log_file = f'log_{current_time}.txt'
+    # 主循环
+    while True:
+        sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
+        # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
+        print("传感器数据:", sensor_data)
+        process_sensor_data(sensor_data, vehicle_data)  # 处理传感器数据
 
-    time.sleep(time_slot)  # 等待100ms
+        time.sleep(time_slot)  # 等待100ms
 
 
-    # # test
-    # initial_pos, initial_theta = get_initial_pos_theta()
-    # pos_calculation(1, 10, initial_pos, initial_theta)
-    
-    # # 测试获取传感器数据
-    # sensor_data = get_sensor_data()
-    # if sensor_data:
-    #     print("传感器数据:", sensor_data)
+        # # test
+        # initial_pos, initial_theta = get_initial_pos_theta()
+        # pos_calculation(1, 10, initial_pos, initial_theta)
+        
+        # # 测试获取传感器数据
+        # sensor_data = get_sensor_data()
+        # if sensor_data:
+        #     print("传感器数据:", sensor_data)
