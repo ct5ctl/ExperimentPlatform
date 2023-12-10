@@ -29,8 +29,6 @@ class VehicleData:
 
     def get_theta_current(self):
         return self.theta_current
-
-vehicle_data = VehicleData()
  
 # # 共享对象
 # with Manager() as manager:

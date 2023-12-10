@@ -1,0 +1,25 @@
+import multiprocessing
+import time
+
+# -
+
+def writer(shared_data):
+    i = 0
+    while True:
+        shared_data.value = i  # 更新共享数据
+        time.sleep(0.1)  # 模拟100ms的频率
+        i += 1
+
+def reader(shared_data):
+    while True:
+        print("Shared data:", shared_data.value)  # 读取共享数据
+        time.sleep(0.1)  # 模拟100ms的频率
+
+if __name__ == "__main__":
+    shared_data = multiprocessing.Value('i', 0)  # 创建共享数据对象
+
+    writer_process = multiprocessing.Process(target=writer, args=(shared_data,))
+    reader_process = multiprocessing.Process(target=reader, args=(shared_data,))
+
+    writer_process.start()
+    reader_process.start()

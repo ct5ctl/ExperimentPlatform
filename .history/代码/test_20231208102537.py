@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     # 创建一个共享内存块
     # pos_current = vehicle_data.get_pos_current
-    pos_current = np.array([1, 2, 3])
+    pos_current = np.array([1, 2, 2])
     print(type(pos_current))
     pos_shm = shared_memory.SharedMemory(create=True, size=pos_current.nbytes)
 

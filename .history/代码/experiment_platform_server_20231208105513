@@ -1,3 +1,7 @@
+import multiprocessing
+import time
+
+# --------------------------------------线程1子任务
 import math
 import time
 import requests
@@ -29,9 +33,7 @@ class VehicleData:
 
     def get_theta_current(self):
         return self.theta_current
-
-vehicle_data = VehicleData()
- 
+    
 # # 共享对象
 # with Manager() as manager:
 #     shared_vehicle_data = manager.Namespace()
@@ -213,29 +215,43 @@ def process_sensor_data(sensor_data, vehicle_data):
     else:
         print("未能获取传感器数据")
 
+# ------------------------------------线程2子任务
 
-if __name__ == '__main__':
-    # 抑制不安全请求的警告
-    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-    # 获取当前时间戳
-    current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
-    # 构建日志文件名
-    log_file = f'log_{current_time}.txt'
-    # 主循环
+
+
+# ------------------------------------线程任务
+
+def writer(shared_list):
     while True:
-        sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
-        # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
-        print("传感器数据:", sensor_data)
-        process_sensor_data(sensor_data, vehicle_data)  # 处理传感器数据
+        # 写入数据到共享列表
+        shared_list.extend([116.38553266, 39.90440998, 0])
+        time.sleep(0.1)  # 休眠100ms
 
-        time.sleep(time_slot)  # 等待100ms
+def reader1(shared_list):
+    while True:
+        # 读取共享列表数据
+        data = shared_list[:]
+        print("Reader 1 data:", data)
+        time.sleep(0.1)  # 休眠100ms
 
+def reader2(shared_list):
+    while True:
+        # 读取共享列表数据
+        data = shared_list[:]
+        print("Reader 2 data:", data)
+        time.sleep(0.1)  # 休眠100ms
 
-        # # test
-        # initial_pos, initial_theta = get_initial_pos_theta()
-        # pos_calculation(1, 10, initial_pos, initial_theta)
-        
-        # # 测试获取传感器数据
-        # sensor_data = get_sensor_data()
-        # if sensor_data:
-        #     print("传感器数据:", sensor_data)
+if __name__ == "__main__":
+    manager = multiprocessing.Manager()
+    shared_list = manager.list()  # 创建共享的列表对象
+
+    # 启动写入数据的进程
+    writer_process = multiprocessing.Process(target=writer, args=(shared_list,))
+    writer_process.start()
+
+    # 启动两个读取数据的进程
+    reader1_process = multiprocessing.Process(target=reader1, args=(shared_list,))
+    reader2_process = multiprocessing.Process(target=reader2, args=(shared_list,))
+    
+    reader1_process.start()
+    reader2_process.start()

@@ -1,3 +1,7 @@
+import multiprocessing
+import time
+
+# --------------------------------------线程1子任务
 import math
 import time
 import requests
@@ -29,9 +33,7 @@ class VehicleData:
 
     def get_theta_current(self):
         return self.theta_current
-
-vehicle_data = VehicleData()
- 
+    
 # # 共享对象
 # with Manager() as manager:
 #     shared_vehicle_data = manager.Namespace()
@@ -213,29 +215,29 @@ def process_sensor_data(sensor_data, vehicle_data):
     else:
         print("未能获取传感器数据")
 
+# ------------------------------------线程2子任务
 
-if __name__ == '__main__':
-    # 抑制不安全请求的警告
-    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-    # 获取当前时间戳
-    current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
-    # 构建日志文件名
-    log_file = f'log_{current_time}.txt'
-    # 主循环
+
+
+#
+
+def writer(shared_data):
+    i = 0
     while True:
-        sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
-        # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
-        print("传感器数据:", sensor_data)
-        process_sensor_data(sensor_data, vehicle_data)  # 处理传感器数据
+        shared_data.value = i  # 更新共享数据
+        time.sleep(0.1)  # 模拟100ms的频率
+        i += 1
 
-        time.sleep(time_slot)  # 等待100ms
+def reader(shared_data):
+    while True:
+        print("Shared data:", shared_data.value)  # 读取共享数据
+        time.sleep(0.1)  # 模拟100ms的频率
 
+if __name__ == "__main__":
+    shared_data = multiprocessing.Value('i', 0)  # 创建共享数据对象
 
-        # # test
-        # initial_pos, initial_theta = get_initial_pos_theta()
-        # pos_calculation(1, 10, initial_pos, initial_theta)
-        
-        # # 测试获取传感器数据
-        # sensor_data = get_sensor_data()
-        # if sensor_data:
-        #     print("传感器数据:", sensor_data)
+    writer_process = multiprocessing.Process(target=writer, args=(shared_data,))
+    reader_process = multiprocessing.Process(target=reader, args=(shared_data,))
+
+    writer_process.start()
+    reader_process.start()

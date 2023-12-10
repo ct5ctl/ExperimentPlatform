@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     # 创建一个共享内存块
     # pos_current = vehicle_data.get_pos_current
-    pos_current = np.array([1, 2, 3])
+    pos_current = np.array([1, 1, 2])
     print(type(pos_current))
     pos_shm = shared_memory.SharedMemory(create=True, size=pos_current.nbytes)
 
@@ -42,13 +42,12 @@ if __name__ == '__main__':
 
     # 打印共享内存块的名称
     print(pos_shm.name)  # 这个名称在另一个 shell 中需要用来连接到同一个共享内存块
-    # subprocess.Popen(["python3", "./test2.py", pos_shm.name])
+    subprocess.Popen(["python", "./test2.pytest2.py", pos_shm.name])
 
     a = [0, 0, 0]
     while True:
         pos_current += 1
         # print(pos_current)
-
         # vehicle_data.update_data(a, 0)
         # print(str(vehicle_data.get_pos_current()))
         # print("vehicle_data.get_pos_current():" + str(type(vehicle_data.get_pos_current())))
