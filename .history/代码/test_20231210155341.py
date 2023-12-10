@@ -49,7 +49,7 @@ if __name__ == '__main__':
     while True:
         pos_current += 1
         print(pos_current)
-        time.sleep(1)  # 等待100ms
+        time.
 
         # vehicle_data.update_data(a, 0)
         # print(str(vehicle_data.get_pos_current()))
