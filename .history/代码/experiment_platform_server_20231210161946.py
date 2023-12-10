@@ -10,7 +10,7 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 
-# ===================================线程1子任务===================================
+# --------------------------------------线程1子任务
 
 time_slot = 0.1
 # 车辆数据类
@@ -71,7 +71,7 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
     return next_pos, next_theta
 
 
-# --------------------------------------使用泽鹿网页接口获取传感器数据
+# 使用泽鹿网页接口获取传感器数据
 def get_query_id():
     query_id_url = "https://192.168.8.125:9001/api/ipc/channel/calibrationSend?type=F6"
     print("请求queryId地址1111:", query_id_url)
@@ -142,7 +142,7 @@ def get_sensor_data():
 
 
 
-# --------------------------------------方向盘to车轮 转角映射    
+# 方向盘2车轮 转角映射    
 def map_degree(steering_wheel_angle):
     # 映射范围
     steering_wheel_min = -360
@@ -158,7 +158,7 @@ def map_degree(steering_wheel_angle):
     return mapped_angle
 
     
-# --------------------------------------处理传感器数据，并发送结果（当前位置、航向角）
+# 处理传感器数据，并发送结果（当前位置、航向角）
 def process_sensor_data(sensor_data, vehicle_data):
     if sensor_data:
         steering_wheel_direction = sensor_data.get('SteeringWheelDirection')
@@ -198,7 +198,7 @@ def process_sensor_data(sensor_data, vehicle_data):
     else:
         print("未能获取传感器数据")
 
-# ===================================线程2子任务===================================
+# ------------------------------------线程2子任务
 async def send_message(websocket):
     # 这里放入你的 WebSocket 发送消息逻辑
     while True:
@@ -217,10 +217,12 @@ async def send_message(websocket):
         # 等待一段时间再发送下一条消息
         await asyncio.sleep(0.1)  # 100ms
 
-# ===================================线程3子任务===================================
 
 
-# ===================================线程任务===================================
+
+# ------------------------------------线程任务
+
+
 
 def pos_server(q):
     while True:
@@ -248,7 +250,6 @@ def start_websocket_server():
     print("Server started")
     asyncio.get_event_loop().run_forever()
 
-
 def reader2(q, name):
     while True:
         # 从队列中获取数据
@@ -256,8 +257,6 @@ def reader2(q, name):
         print(f"Reader {name} data:", data)
         time.sleep(1)  # 休眠100ms
 
-
-# ===================================主函数===================================
 if __name__ == "__main__":
     # 构建车辆数据实例
     vehicle_data = VehicleData()

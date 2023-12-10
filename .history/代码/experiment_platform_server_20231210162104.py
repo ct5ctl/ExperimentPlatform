@@ -248,7 +248,6 @@ def start_websocket_server():
     print("Server started")
     asyncio.get_event_loop().run_forever()
 
-
 def reader2(q, name):
     while True:
         # 从队列中获取数据

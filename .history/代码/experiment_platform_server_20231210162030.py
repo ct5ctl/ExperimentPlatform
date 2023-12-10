@@ -217,10 +217,12 @@ async def send_message(websocket):
         # 等待一段时间再发送下一条消息
         await asyncio.sleep(0.1)  # 100ms
 
-# ===================================线程3子任务===================================
 
 
-# ===================================线程任务===================================
+
+# ------------------------------------线程任务
+
+
 
 def pos_server(q):
     while True:
@@ -248,7 +250,6 @@ def start_websocket_server():
     print("Server started")
     asyncio.get_event_loop().run_forever()
 
-
 def reader2(q, name):
     while True:
         # 从队列中获取数据
@@ -256,8 +257,6 @@ def reader2(q, name):
         print(f"Reader {name} data:", data)
         time.sleep(1)  # 休眠100ms
 
-
-# ===================================主函数===================================
 if __name__ == "__main__":
     # 构建车辆数据实例
     vehicle_data = VehicleData()

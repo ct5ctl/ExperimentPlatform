@@ -10,7 +10,7 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 
-# ===================================线程1子任务===================================
+# =线程1子任务
 
 time_slot = 0.1
 # 车辆数据类
@@ -198,7 +198,7 @@ def process_sensor_data(sensor_data, vehicle_data):
     else:
         print("未能获取传感器数据")
 
-# ===================================线程2子任务===================================
+# ------------------------------------线程2子任务
 async def send_message(websocket):
     # 这里放入你的 WebSocket 发送消息逻辑
     while True:
@@ -217,10 +217,12 @@ async def send_message(websocket):
         # 等待一段时间再发送下一条消息
         await asyncio.sleep(0.1)  # 100ms
 
-# ===================================线程3子任务===================================
 
 
-# ===================================线程任务===================================
+
+# ------------------------------------线程任务
+
+
 
 def pos_server(q):
     while True:
@@ -248,7 +250,6 @@ def start_websocket_server():
     print("Server started")
     asyncio.get_event_loop().run_forever()
 
-
 def reader2(q, name):
     while True:
         # 从队列中获取数据
@@ -256,8 +257,6 @@ def reader2(q, name):
         print(f"Reader {name} data:", data)
         time.sleep(1)  # 休眠100ms
 
-
-# ===================================主函数===================================
 if __name__ == "__main__":
     # 构建车辆数据实例
     vehicle_data = VehicleData()
