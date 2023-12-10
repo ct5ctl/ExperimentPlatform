@@ -199,7 +199,7 @@ def process_sensor_data(sensor_data, vehicle_data):
         print("未能获取传感器数据")
 
 # ===================================线程2子任务===================================
-async def send_message(websocket, q):
+async def send_message(websocket):
     # 这里放入你的 WebSocket 发送消息逻辑
     while True:
         # 模拟获取位置和朝向数据，这里用一个固定的数据代替
@@ -235,10 +235,10 @@ def pos_server(q):
         time.sleep(time_slot)  # 等待100ms
 
 
-def start_websocket_server(q):
+def start_websocket_server():
     async def echo(websocket, path):
         try:
-            await send_message(websocket, q)
+            await send_message(websocket)
         except websockets.exceptions.ConnectionClosedError:
             pass
 
@@ -269,7 +269,7 @@ if __name__ == "__main__":
     vehicle_data = VehicleData()
     # 抑制不安全请求的警告
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-    # 创建一个进程数据传输队列
+    # 创建一个shuj队列
     q = multiprocessing.Queue()
 
     # 启动车辆数据预测进程
@@ -277,10 +277,10 @@ if __name__ == "__main__":
     pos_server_process.start()
 
     # 启动websocket服务进程
-    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q,))
+    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q, "1"))
     websocket_server_process.start()
     # # 启动导航模拟
-    # reader2_process = multiprocessing.Process(target=reader2, args=(q,))
+    # reader2_process = multiprocessing.Process(target=reader2, args=(q, "2"))
     # reader2_process.start()
     
     

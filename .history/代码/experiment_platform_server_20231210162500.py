@@ -235,7 +235,7 @@ def pos_server(q):
         time.sleep(time_slot)  # 等待100ms
 
 
-def start_websocket_server(q):
+def start_websocket_server(q ):
     async def echo(websocket, path):
         try:
             await send_message(websocket, q)
