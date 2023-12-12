@@ -48,6 +48,8 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
 
     # 一度纬度在地球表面上的大约距离（单位：千米）
     km_per_latitude_degree = 110
+    
+
         
     if abs(wheel_angle_rad) > 0.001:  # 避免除以零错误
         # 转向角速度
@@ -70,8 +72,8 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
     
     # 计算下一时刻位置
     next_pos = [    
-        last_moment_pos[0] + delta_longitude,
-        last_moment_pos[1] + delta_latitude,
+        last_moment_pos[0] + delta_x,
+        last_moment_pos[1] + delta_y,
         last_moment_pos[2]  # 保持z轴不变
     ]
 

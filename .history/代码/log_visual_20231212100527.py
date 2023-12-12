@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # 读取文件
-file_path = 'log_20231212_1007.txt'
+file_path = 'log_20231212_1003.txt'
 data = []
 with open(file_path, 'r') as file:
     lines = file.readlines()
@@ -24,7 +24,7 @@ print('thetas: ', thetas)
 plt.figure(figsize=(8, 6))
 x = [pos[0] for pos in positions]
 y = [pos[1] for pos in positions]
-plt.plot(x, y, linestyle='-', color='b')
+plt.plot(x, y, marker='o', linestyle='-', color='b')
 plt.scatter(x[0], y[0], marker='D', color='g', label='Start')
 plt.scatter(x[-1], y[-1], marker='o', color='r', label='End')
 

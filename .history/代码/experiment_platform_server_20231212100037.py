@@ -40,27 +40,22 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
     # 转换为弧度
     wheel_angle_rad = math.radians(wheel_angle)
     last_moment_theta_rad = math.radians(last_moment_theta)
-    # 计算车辆行驶距离（单位：千米）
-    distance = speed * time_slot / 3600  # 将小时转换为秒
+    # 计算车辆行驶距离
+    distance = speed * time_slot
     
-    # 一度经度在地球表面上的大约距离（单位：千米）
-    km_per_longitude_degree = 111
-
-    # 一度纬度在地球表面上的大约距离（单位：千米）
-    km_per_latitude_degree = 110
-        
+    
     if abs(wheel_angle_rad) > 0.001:  # 避免除以零错误
         # 转向角速度
         turning_radius = wheel_base / math.tan(wheel_angle_rad)
 
         # 计算转弯半径变化引起的车辆位置变化
         delta_theta = distance / turning_radius
-        delta_longitude = math.degrees(delta_theta)  # 角度转换为经度变化
-        delta_latitude = distance * math.cos(last_moment_pos[1] * math.pi / 180)  # 角度转换为纬度变化
+        delta_x = turning_radius * (math.sin(last_moment_theta_rad + delta_theta) - math.sin(last_moment_theta_rad))
+        delta_y = turning_radius * (math.cos(last_moment_theta_rad) - math.cos(last_moment_theta_rad + delta_theta))
     else:
-        # 车辆直行时的位置变化（根据车辆行驶方向计算）
-        delta_longitude = distance * math.cos(last_moment_theta_rad) / km_per_longitude_degree
-        delta_latitude = distance * math.sin(last_moment_theta_rad) / km_per_latitude_degree
+        # 车辆直行时的位置变化
+        delta_x = distance * math.cos(last_moment_theta_rad)
+        delta_y = distance * math.sin(last_moment_theta_rad)
         delta_theta = 0
 
     # 计算下一时刻位置
@@ -69,9 +64,9 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
     next_theta = (next_theta + 360) % 360
     
     # 计算下一时刻位置
-    next_pos = [    
-        last_moment_pos[0] + delta_longitude,
-        last_moment_pos[1] + delta_latitude,
+    next_pos = [
+        last_moment_pos[0] + delta_x,
+        last_moment_pos[1] + delta_y,
         last_moment_pos[2]  # 保持z轴不变
     ]
 
@@ -166,7 +161,7 @@ def map_degree(steering_wheel_angle):
 
     
 # --------------------------------------处理传感器数据，并发送结果（当前位置、航向角）
-def process_sensor_data(sensor_data, vehicle_data, log_file):
+def process_sensor_data(sensor_data, vehicle_data):
     if sensor_data:
         steering_wheel_direction = sensor_data.get('SteeringWheelDirection')
         steering_wheel_angle = sensor_data.get('SteeringWheelAngle')
@@ -192,13 +187,17 @@ def process_sensor_data(sensor_data, vehicle_data, log_file):
 
         # debug
         # print("vehicle_data_pos: " + str(vehicle_data.get_pos_current()) + "vehicle_data_theta: " + vehicle_data.get_theta_current())
-        # # 构建日志文件名
-        # with open(f'log_vehicledata.txt', 'a') as file:
-        #     file.write(f"pos_current: {vehicle_data.get_pos_current()}, theta_current: {vehicle_data.get_theta_current()}\n")
+        # 构建日志文件名
+        with open(f'log_vehicledata.txt', 'a') as file:
+            file.write(f"pos_current: {vehicle_data.get_pos_current()}, theta_current: {vehicle_data.get_theta_current()}\n")
 
         # Write data to a log file
+        # 获取当前时间戳
+        current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
+        # 构建日志文件名
+        log_file = f'log_{current_time}.txt'
         with open(log_file, 'a') as file:
-            file.write(f"pos_current: {vehicle_data.get_pos_current()}, theta_current: {vehicle_data.get_theta_current()}, speed: {speed}, wheel_angle: {wheel_angle}, steering_wheel_angle: {steering_wheel_angle}\n")
+            file.write(f"pos_current: {pos_current}, theta_current: {theta_current}, speed: {speed}, wheel_angle: {wheel_angle}, steering_wheel_angle: {steering_wheel_angle}\n")
 
         return pos_current, theta_current
     else:
@@ -229,13 +228,13 @@ async def send_message(websocket, q):
 
 # ===================================线程任务===================================
 
-def pos_server(q, vehicle_data, log_file):
+def pos_server(q, vehicle_data):
     while True:
         sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
         # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
         # print("传感器数据:", sensor_data)
         # 处理传感器数据，获取当前车辆位置及航向角
-        pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
+        pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data)  
         # 写入数据到队列
         q.put(pos_current)
         print(f"q writer data:", pos_current)
@@ -282,7 +281,7 @@ if __name__ == "__main__":
     q = multiprocessing.Queue()
 
     # 启动车辆数据预测进程
-    pos_server_process = multiprocessing.Process(target=pos_server, args=(q, vehicle_data, log_file))
+    pos_server_process = multiprocessing.Process(target=pos_server, args=(q, vehicle_data， ))
     pos_server_process.start()
 
     # 启动websocket服务进程

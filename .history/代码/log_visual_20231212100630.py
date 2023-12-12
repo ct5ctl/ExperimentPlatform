@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # 读取文件
-file_path = 'log_20231212_1007.txt'
+file_path = 'log_20231212_1003.txt'
 data = []
 with open(file_path, 'r') as file:
     lines = file.readlines()

@@ -70,8 +70,8 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
     
     # 计算下一时刻位置
     next_pos = [    
-        last_moment_pos[0] + delta_longitude,
-        last_moment_pos[1] + delta_latitude,
+        last_moment_pos[0] + delta_x,
+        last_moment_pos[1] + delta_y,
         last_moment_pos[2]  # 保持z轴不变
     ]
 

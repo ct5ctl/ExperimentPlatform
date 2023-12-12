@@ -48,19 +48,34 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
 
     # 一度纬度在地球表面上的大约距离（单位：千米）
     km_per_latitude_degree = 110
-        
+    
+    
     if abs(wheel_angle_rad) > 0.001:  # 避免除以零错误
         # 转向角速度
         turning_radius = wheel_base / math.tan(wheel_angle_rad)
 
         # 计算转弯半径变化引起的车辆位置变化
         delta_theta = distance / turning_radius
+        delta_x = turning_radius * (math.sin(last_moment_theta_rad + delta_theta) - math.sin(last_moment_theta_rad))
+        delta_y = turning_radius * (math.cos(last_moment_theta_rad) - math.cos(last_moment_theta_rad + delta_theta))
+    else:
+        # 车辆直行时的位置变化
+        delta_x = distance * math.cos(last_moment_theta_rad)
+        delta_y = distance * math.sin(last_moment_theta_rad)
+        delta_theta = 0
+
+    if abs(wheel_angle_rad) > 0.001:  # 避免除以零错误
+        # 转向角速度
+        turning_radius = wheel_base / math.tan(wheel_angle_rad)
+
+        # 计算转弯半径变化引起的车辆位置变化
+        delta_theta =  / turning_radius
         delta_longitude = math.degrees(delta_theta)  # 角度转换为经度变化
         delta_latitude = distance * math.cos(last_moment_pos[1] * math.pi / 180)  # 角度转换为纬度变化
     else:
         # 车辆直行时的位置变化（根据车辆行驶方向计算）
         delta_longitude = distance * math.cos(last_moment_theta_rad) / km_per_longitude_degree
-        delta_latitude = distance * math.sin(last_moment_theta_rad) / km_per_latitude_degree
+        delta_latitude = distance * math.sin(ladistancest_moment_theta_rad) / km_per_latitude_degree
         delta_theta = 0
 
     # 计算下一时刻位置
@@ -70,8 +85,8 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
     
     # 计算下一时刻位置
     next_pos = [    
-        last_moment_pos[0] + delta_longitude,
-        last_moment_pos[1] + delta_latitude,
+        last_moment_pos[0] + delta_x,
+        last_moment_pos[1] + delta_y,
         last_moment_pos[2]  # 保持z轴不变
     ]
 
