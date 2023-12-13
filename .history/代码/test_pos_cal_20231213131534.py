@@ -6,7 +6,7 @@ time_slot = 0.1
 # --------------------------------------计算当前位置及航向角    
 import math
 
-def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2.785, time_slot = 0.1):
+def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2., time_slot = 0.1):
     # 转换角度为弧度
     radian_theta = math.radians(last_moment_theta)
     radian_wheel_angle = math.radians(wheel_angle)
@@ -47,7 +47,7 @@ def simulate_vehicle_motion():
     initial_theta = 90  # 初始航向角度
     
     # 车辆参数
-    wheel_base = 2.78  # 车辆轴距
+    wheel_base = 2.5  # 车辆轴距
     
     # 模拟车速和车轮角度的变化
     speeds = [50] * 100  # 模拟1000个0.1秒内速度恒定为50 km/h

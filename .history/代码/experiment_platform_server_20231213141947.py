@@ -227,7 +227,7 @@ async def send_message(websocket, q_pos):
         await websocket.send(json.dumps(message))
 
         # 等待一段时间再发送下一条消息
-        await asyncio.sleep(time_slot)  # 100ms
+        await asyncio.sleep(0.1)  # 100ms
 
 # ===================================线程3子任务===================================
 def milliseconds_since_2006_01_01(simula_date):

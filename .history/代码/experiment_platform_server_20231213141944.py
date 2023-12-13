@@ -227,7 +227,7 @@ async def send_message(websocket, q_pos):
         await websocket.send(json.dumps(message))
 
         # 等待一段时间再发送下一条消息
-        await asyncio.sleep(time_slot)  # 100ms
+        await asyncio.sleep(0.1)  # 100ms
 
 # ===================================线程3子任务===================================
 def milliseconds_since_2006_01_01(simula_date):
@@ -298,7 +298,7 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
             send_simul_start_command(q_pos, q_theta, simula_data)
             flag.set() 
         
-        time.sleep(time_slot)  # 轨迹发送频率
+        time.sleep(time_slote)  # 轨迹发送频率
 
 
 # ===================================主函数===================================

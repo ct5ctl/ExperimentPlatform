@@ -13,15 +13,16 @@ from datetime import datetime
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 
-# ===================================初始参数===================================
+# ===================================线程1子任务===================================
 
 time_slot = 0.1
-
 # 车辆数据类
 class VehicleData:
     def __init__(self):
         self.pos_current = [ 116.38553266, 39.90440998, 0 ]  # 初始化为默认值
         self.theta_current = 270  # 初始化为默认值
+        # self.pos_current = [[ 0, 0, 1 ]]  # 初始化为默认值
+        # self.theta_current = 270  # 初始化为默认值
 
     def update_data(self, pos, theta):
         self.pos_current = pos
@@ -33,23 +34,10 @@ class VehicleData:
     def get_theta_current(self):
         return self.theta_current
     
-# 仿真数据类
-class SimulaData:
-    def __init__(self):
-        self.simula_date = datetime(2022, 6, 15, 10, 0, 0)      # 仿真日期
-        self.simula_time = 360  # 仿真时间，单位：秒
-    
-    def get_simula_date(self):
-        return self.simula_date
 
-    def get_simula_time(self):
-        return self.simula_time
 
-    
-
-# ===================================线程1子任务===================================
 # --------------------------------------计算当前位置及航向角    
-def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2.785):
+def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2.785, time_slot = 0.1):
     # 转换角度为弧度
     radian_theta = math.radians(last_moment_theta)
     radian_wheel_angle = math.radians(wheel_angle)
@@ -189,7 +177,7 @@ def process_sensor_data(sensor_data, vehicle_data, log_file):
 
         # 方向角度换算
         wheel_angle = map_degree(steering_wheel_angle)
-        # 获取车辆当前位置、航向角
+        # 获取车辆当前位置、航向角（位置偏移+上一时刻位置）
         pos_current, theta_current = calculate_next_pos_theta(vehicle_data.get_pos_current(), vehicle_data.get_theta_current(), float(speed), wheel_angle)
         # 更新 VehicleData 实例中的数据
         vehicle_data.update_data(pos_current, theta_current)
@@ -211,11 +199,11 @@ def process_sensor_data(sensor_data, vehicle_data, log_file):
         return vehicle_data.get_pos_current(), vehicle_data.get_theta_current() # 返回上一时刻位置和航向角
 
 # ===================================线程2子任务===================================
-async def send_message(websocket, q_pos):
+async def send_message(websocket, q):
     # 这里放入你的 WebSocket 发送消息逻辑
     while True:
         # 模拟获取位置和朝向数据，这里用一个固定的数据代替
-        pos_current = q_pos.get()
+        pos_current = q.get()
         theta_current = 270
 
         message = {
@@ -227,39 +215,35 @@ async def send_message(websocket, q_pos):
         await websocket.send(json.dumps(message))
 
         # 等待一段时间再发送下一条消息
-        await asyncio.sleep(time_slot)  # 100ms
+        await asyncio.sleep(0.1)  # 100ms
 
 # ===================================线程3子任务===================================
-def milliseconds_since_2006_01_01(simula_date):
+def milliseconds_since_2006_01_01(target_date):
     # 设置起始日期
     start_date = datetime(2006, 1, 1)
     
     # 计算两个日期之间的时间差
-    difference = simula_date - start_date
+    difference = target_date - start_date
     
     # 转换时间差为毫秒数
     milliseconds = difference.total_seconds() * 1000
     
     return milliseconds
 
-def send_simul_start_command(q_pos, q_theta, simula_data):
-    simula_date_milliseconds = milliseconds_since_2006_01_01(simula_data.get_simula_date())
-    simula_time = simula_data.get_simula_time()
-    pos_current = q_pos.get()
-    theta_current = q_theta.get()
-
+def send_simul_start_command(q, target_date):
+    milliseconds = milliseconds_since_2006_01_01(target_date)
+    data = q.get()
     print("已发送导航模拟启动指令")
     pass
 
-def send_track_data_command(q_pos, q_theta):
-    pos_current = q_pos.get()
-    theta_current = q_theta.get()
+def send_track_data_command(q):
+    data = q.get()
     print("已发送轨迹数据指令")
     pass
 
 # ===================================线程任务===================================
 
-def pos_server(q_pos, q_theta, vehicle_data, log_file):
+def pos_server(q, vehicle_data, log_file):
     while True:
         sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
         # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
@@ -267,17 +251,15 @@ def pos_server(q_pos, q_theta, vehicle_data, log_file):
         # 处理传感器数据，获取当前车辆位置及航向角
         pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
         # 写入数据到队列
-        q_pos.put(pos_current)
-        q_theta.put(theta_current)
-        print(f"q_pos writer data:", pos_current)
-        print(f"q_theta writer data:", theta_current)
+        q.put(pos_current)
+        print(f"q writer data:", pos_current)
         time.sleep(time_slot)  # 等待100ms
 
 
-def start_websocket_server(q_pos):
+def start_websocket_server(q):
     async def echo(websocket, path):
         try:
-            await send_message(websocket, q_pos)
+            await send_message(websocket, q)
         except websockets.exceptions.ConnectionClosedError:
             pass
 
@@ -288,17 +270,17 @@ def start_websocket_server(q_pos):
     print("Server started")
     asyncio.get_event_loop().run_forever()
 
-def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
+def navigation_simulation_server(q, flag, simula_date):
     while True:
         if flag.is_set():
             # 非首次执行，发送轨迹数据指令
-            send_track_data_command(q_pos, q_theta)
+            send_track_data_command(q)
         else:
             # 首次执行，发送导航模拟启动指令
-            send_simul_start_command(q_pos, q_theta, simula_data)
+            send_simul_start_command(q, simula_date)
             flag.set() 
         
-        time.sleep(time_slot)  # 轨迹发送频率
+        time.sleep(0.1)  # 轨迹发送频率
 
 
 # ===================================主函数===================================
@@ -311,30 +293,26 @@ if __name__ == "__main__":
 
     # 构建车辆数据实例
     vehicle_data = VehicleData()
-    # 构建仿真数据实例
-    simula_data = SimulaData()
-    
     # 抑制不安全请求的警告
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     warnings.filterwarnings("ignore", category=urllib3.exceptions.InsecureRequestWarning)
     # 创建一个进程数据传输队列
-    q_pos = multiprocessing.Queue()
-    q_theta = multiprocessing.Queue()
+    q = multiprocessing.Queue()
 
     # 启动车辆数据预测进程
-    pos_server_process = multiprocessing.Process(target=pos_server, args=(q_pos, q_theta, vehicle_data, log_file))
+    pos_server_process = multiprocessing.Process(target=pos_server, args=(q, vehicle_data, log_file))
     pos_server_process.start()
 
-    
+    # 导航模拟的日期时间
+    simula_date = datetime(2022, 6, 15, 10, 0, 0)
     # 启动websocket服务进程
-    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))
-    websocket_server_process.start()
-
     flag = multiprocessing.Event()
-    flag.clear()  
-    # 启动导航模拟报文发送进程
-    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
-    navigation_simulation_process.start()
+    flag.clear()  # 初始化，确保首次执行执行任务 a
+    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q, flag, target_date))
+    websocket_server_process.start()
+    # # 启动导航模拟
+    # navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q,))
+    # navigation_simulation_process.start()
     
     
 

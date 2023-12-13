@@ -47,7 +47,7 @@ def simulate_vehicle_motion():
     initial_theta = 90  # 初始航向角度
     
     # 车辆参数
-    wheel_base = 2.78  # 车辆轴距
+    wheel_base = 2.5  # 车辆轴距
     
     # 模拟车速和车轮角度的变化
     speeds = [50] * 100  # 模拟1000个0.1秒内速度恒定为50 km/h
