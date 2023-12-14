@@ -13,6 +13,8 @@ import json
 import requests
 from datetime import datetime
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import matplotlib.pyplot as plt
+
 
 
 # ===================================初始参数===================================
@@ -24,12 +26,11 @@ class VehicleData:
     def __init__(self):
         self.pos_current = [ 116.38553266, 39.90440998, 0 ]  # 初始化为默认值
         self.theta_current = 270  # 初始化为默认值
-        self.speed = 0  # 初始化为默认值
+        self.se
 
     def update_data(self, pos, theta, speed):
         self.pos_current = pos
         self.theta_current = theta
-        self.speed = speed
 
     def get_pos_current(self):
         return self.pos_current
@@ -60,7 +61,6 @@ class SimulaData:
     def update_track_data(self, track_time, track_number):
         self.track_time = track_time
         self.track_number = track_number
-
 
     
 
@@ -312,13 +312,26 @@ def send_track_data_command(q_pos, q_theta, simula_data):
 
 # ===================================线程任务===================================
 
-def pos_server(q_pos, q_theta, vehicle_data, log_file):
+def pos_server(q_pos, q_theta, vehicle_data, log_file, positions, thetas):
     while True:
         sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
         # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
         # print("传感器数据:", sensor_data)
         # 处理传感器数据，获取当前车辆位置及航向角
         pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
+
+        # debug 实时绘制轨迹
+        positions.append(vehicle_data.get_pos_current())  # 存储当前位置
+        thetas.append(vehicle_data.get_theta_current())  # 存储当前航向角   
+        plt.close()
+        plt.figure(figsize=(8, 6))
+        plt.plot(positions, thetas, marker='o', linestyle='-')
+        plt.title('车辆轨迹')
+        plt.xlabel('位置')
+        plt.ylabel('航向角')
+        plt.grid(True)
+        plt.pause(0.01)  # 显示图像 0.01 秒     
+
         # 写入数据到队列
         q_pos.put(pos_current)
         q_theta.put(theta_current)
@@ -341,6 +354,7 @@ def start_websocket_server(q_pos):
     print("Server started")
     asyncio.get_event_loop().run_forever()
 
+
 def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
     while True:
         if flag.is_set():
@@ -356,6 +370,9 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
 
 # ===================================主函数===================================
 if __name__ == "__main__":
+    # 初始化存储轨迹数据的列表
+    positions = []
+    thetas = []
 
     # 获取当前时间戳
     current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
@@ -375,8 +392,9 @@ if __name__ == "__main__":
     q_theta = multiprocessing.Queue()
 
     # 启动车辆数据预测进程
-    pos_server_process = multiprocessing.Process(target=pos_server, args=(q_pos, q_theta, vehicle_data, log_file))
+    pos_server_process = multiprocessing.Process(target=pos_server, args=(q_pos, q_theta, vehicle_data, log_file, positions, thetas))
     pos_server_process.start()
+
     
     # 启动websocket服务进程
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))
@@ -385,8 +403,8 @@ if __name__ == "__main__":
     flag = multiprocessing.Event()
     flag.clear()  
     # 启动导航模拟报文发送进程
-    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
-    navigation_simulation_process.start()
+    # navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
+    # navigation_simulation_process.start()
     
     
 

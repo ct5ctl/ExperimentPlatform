@@ -1,7 +1,5 @@
 import multiprocessing
 import math
-import socket
-import struct
 import time
 import warnings
 import requests
@@ -377,6 +375,7 @@ if __name__ == "__main__":
     # 启动车辆数据预测进程
     pos_server_process = multiprocessing.Process(target=pos_server, args=(q_pos, q_theta, vehicle_data, log_file))
     pos_server_process.start()
+
     
     # 启动websocket服务进程
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))

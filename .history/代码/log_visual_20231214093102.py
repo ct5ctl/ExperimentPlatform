@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # 读取文件
-file_path = 'log_20231214_1346.txt'
+file_path = 'log_20231214_0929.txt'
 data = []
 with open(file_path, 'r') as file:
     lines = file.readlines()
@@ -28,13 +28,13 @@ plt.plot(x, y, linestyle='-', color='b')
 plt.scatter(x[0], y[0], marker='D', color='g', label='Start')
 plt.scatter(x[-1], y[-1], marker='o', color='r', label='End')
 
-# # 添加航向箭头
-# for i in range(len(positions)):
-#     pos = positions[i]
-#     theta = thetas[i]
-#     dx = np.cos(np.deg2rad(theta))  # 计算箭头的x方向增量
-#     dy = np.sin(np.deg2rad(theta))  # 计算箭头的y方向增量
-#     plt.arrow(pos[0], pos[1], dx, dy, head_width=0.2, head_length=0.3, fc='orange', ec='orange')
+# 添加航向箭头
+for i in range(len(positions)):
+    pos = positions[i]
+    theta = thetas[i]
+    dx = np.cos(np.deg2rad(theta))  # 计算箭头的x方向增量
+    dy = np.sin(np.deg2rad(theta))  # 计算箭头的y方向增量
+    plt.arrow(pos[0], pos[1], dx, dy, head_width=0.2, head_length=0.3, fc='orange', ec='orange')
 
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')

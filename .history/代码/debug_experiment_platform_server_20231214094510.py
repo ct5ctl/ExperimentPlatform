@@ -1,7 +1,5 @@
 import multiprocessing
 import math
-import socket
-import struct
 import time
 import warnings
 import requests
@@ -13,6 +11,8 @@ import json
 import requests
 from datetime import datetime
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import matplotlib.pyplot as plt
+
 
 
 # ===================================初始参数===================================
@@ -24,12 +24,10 @@ class VehicleData:
     def __init__(self):
         self.pos_current = [ 116.38553266, 39.90440998, 0 ]  # 初始化为默认值
         self.theta_current = 270  # 初始化为默认值
-        self.speed = 0  # 初始化为默认值
 
-    def update_data(self, pos, theta, speed):
+    def update_data(self, pos, theta):
         self.pos_current = pos
         self.theta_current = theta
-        self.speed = speed
 
     def get_pos_current(self):
         return self.pos_current
@@ -42,25 +40,12 @@ class SimulaData:
     def __init__(self):
         self.simula_date = datetime(2022, 6, 15, 10, 0, 0)      # 仿真日期
         self.simula_time = 360  # 仿真时间，单位：秒
-        self.track_time = 0  # 轨迹时间，单位：秒
-        self.track_number = 0  # 轨迹序号
-        
+    
     def get_simula_date(self):
         return self.simula_date
 
     def get_simula_time(self):
         return self.simula_time
-    
-    def get_track_time(self):
-        return self.track_time
-    
-    def get_track_number(self):
-        return self.track_number
-    
-    def update_track_data(self, track_time, track_number):
-        self.track_time = track_time
-        self.track_number = track_number
-
 
     
 
@@ -209,7 +194,7 @@ def process_sensor_data(sensor_data, vehicle_data, log_file):
         # 获取车辆当前位置、航向角
         pos_current, theta_current = calculate_next_pos_theta(vehicle_data.get_pos_current(), vehicle_data.get_theta_current(), float(speed), wheel_angle)
         # 更新 VehicleData 实例中的数据
-        vehicle_data.update_data(pos_current, theta_current, speed)
+        vehicle_data.update_data(pos_current, theta_current)
         print("vehicle_data.get_pos_current(): " , vehicle_data.get_pos_current(), "vehicle_data.get_theta_current(): ", vehicle_data.get_theta_current())
 
         # debug
@@ -264,51 +249,15 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     simula_time = simula_data.get_simula_time()
     pos_current = q_pos.get()
     theta_current = q_theta.get()
-    command = 0x0ABB9011
 
-    # 构建导航模拟启动指令
-    frame_length = 248  # 根据表格中指令结构与参数的总长度确定
-    frame_data = struct.pack('<IIIIIddd', command, simula_date_milliseconds, simula_time, 0,
-                             pos_current[0], pos_current[1], pos_current[2],
-                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0,
-                             0, theta_current, 0,
-                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    
-    # 创建 socket 对象
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    server_address = ('10.129.41.113', 8080)  # 目标服务器地址和端口
+    print("已发送导航模拟启动指令")
+    pass
 
-    # 构建帧头
-    frame_header = struct.pack('<I', 0xA5A56666)
-    # 构建帧标志
-    frame_flag = struct.pack('<I', 0)
-    # 构建帧长
-    frame_length_packed = struct.pack('<I', frame_length)
-    # 构建备用字段
-    alternate = struct.pack('<I', 0)
-    
-    # 合并数据帧
-    full_frame = frame_header + frame_flag + frame_length_packed + alternate + frame_data
-
-    try:
-        # 发送数据
-        sock.sendto(full_frame, server_address)
-        print("已发送导航模拟启动指令")
-    except socket.error as e:
-        print(f"发送数据失败: {e}")
-    finally:
-        sock.close()
-
-def send_track_data_command(q_pos, q_theta, simula_data):
+def send_track_data_command(q_pos, q_theta):
     pos_current = q_pos.get()
     theta_current = q_theta.get()
-    track_time = simula_data.get_track_time()
-    track_number = simula_data.get_track_number()
-    # 更新轨迹时间和轨迹序号
-    simula_data.update_track_data(track_time + time_slot, track_number + 1)
-    # 在此处新增代码
-
     print("已发送轨迹数据指令")
+    pass
 
 # ===================================线程任务===================================
 
@@ -319,6 +268,10 @@ def pos_server(q_pos, q_theta, vehicle_data, log_file):
         # print("传感器数据:", sensor_data)
         # 处理传感器数据，获取当前车辆位置及航向角
         pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
+        positions.append(vehicle_data.get_pos_current())  # 存储当前位置
+        thetas.append(vehicle_data.get_theta_current())  # 存储当前航向角   
+
+        
         # 写入数据到队列
         q_pos.put(pos_current)
         q_theta.put(theta_current)
@@ -345,7 +298,7 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
     while True:
         if flag.is_set():
             # 非首次执行，发送轨迹数据指令
-            send_track_data_command(q_pos, q_theta, simula_data)
+            send_track_data_command(q_pos, q_theta)
         else:
             # 首次执行，发送导航模拟启动指令
             send_simul_start_command(q_pos, q_theta, simula_data)
@@ -356,6 +309,9 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
 
 # ===================================主函数===================================
 if __name__ == "__main__":
+    # 初始化存储轨迹数据的列表
+    positions = []
+    thetas = []
 
     # 获取当前时间戳
     current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
@@ -377,6 +333,7 @@ if __name__ == "__main__":
     # 启动车辆数据预测进程
     pos_server_process = multiprocessing.Process(target=pos_server, args=(q_pos, q_theta, vehicle_data, log_file))
     pos_server_process.start()
+
     
     # 启动websocket服务进程
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))

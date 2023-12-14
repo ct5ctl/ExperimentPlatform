@@ -1,7 +1,5 @@
 import multiprocessing
 import math
-import socket
-import struct
 import time
 import warnings
 import requests
@@ -381,6 +379,7 @@ if __name__ == "__main__":
     # 启动websocket服务进程
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))
     websocket_server_process.start()
+
 
     flag = multiprocessing.Event()
     flag.clear()  
