@@ -13,8 +13,6 @@ import json
 import requests
 from datetime import datetime
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-import matplotlib.pyplot as plt
-
 
 
 # ===================================初始参数===================================
@@ -62,6 +60,7 @@ class SimulaData:
     def update_track_data(self, track_time, track_number):
         self.track_time = track_time
         self.track_number = track_number
+
 
     
 
@@ -277,7 +276,7 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     
     # 创建 socket 对象
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    server_address = ('10.129.41.113', 8080)  # 目标服务器地址和端口
+    server_address = ('10.129.41.251', 8080)  # 目标服务器地址和端口
 
     # 构建帧头
     frame_header = struct.pack('<I', 0xA5A56666)
@@ -301,38 +300,59 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
         sock.close()
 
 def send_track_data_command(q_pos, q_theta, simula_data):
+    # 获取当前数据
     pos_current = q_pos.get()
     theta_current = q_theta.get()
     track_time = simula_data.get_track_time()
     track_number = simula_data.get_track_number()
+
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number + 1)
-    # 在此处新增代码
 
-    print("已发送轨迹数据指令")
+    # 构建数据帧
+    command = 0x0A5A5C39  # 命令字
+    frame_data = struct.pack('<qqqdddddddddddddddddddd', command, track_time, track_number, 0,
+                             pos_current[0], pos_current[1], pos_current[2],
+                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                             0.0, track_time, track_number, 0, 0.0, theta_current, 0.0, 
+                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+
+    # 创建 socket 对象
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    server_address = ('10.129.41.251', 8080)  # 目标服务器地址和端口
+
+    # 构建帧头
+    frame_header = struct.pack('<I', 0xA5A56666)
+    # 构建帧标志
+    frame_flag = struct.pack('<I', 0)
+    # 计算帧长
+    frame_length = len(frame_data)
+    frame_length_packed = struct.pack('<I', frame_length)
+    # 构建备用字段
+    alternate = struct.pack('<I', 0)
+
+    # 合并数据帧
+    full_frame = frame_header + frame_flag + frame_length_packed + alternate + frame_data
+
+    try:
+        # 发送数据
+        sock.sendto(full_frame, server_address)
+        print("已发送轨迹数据指令")
+    except socket.error as e:
+        print(f"发送数据失败: {e}")
+    finally:
+        sock.close()
 
 # ===================================线程任务===================================
 
-def pos_server(q_pos, q_theta, vehicle_data, log_file, positions, thetas):
+def pos_server(q_pos, q_theta, vehicle_data, log_file):
     while True:
         sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
         # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
         # print("传感器数据:", sensor_data)
         # 处理传感器数据，获取当前车辆位置及航向角
+        pos_current = [0, 0,]
         pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
-
-        # debug 实时绘制轨迹
-        positions.append(vehicle_data.get_pos_current())  # 存储当前位置
-        thetas.append(vehicle_data.get_theta_current())  # 存储当前航向角   
-        plt.close()
-        plt.figure(figsize=(8, 6))
-        plt.plot(positions, thetas, marker='o', linestyle='-')
-        plt.title('车辆轨迹')
-        plt.xlabel('位置')
-        plt.ylabel('航向角')
-        plt.grid(True)
-        plt.pause(0.01)  # 显示图像 0.01 秒     
-
         # 写入数据到队列
         q_pos.put(pos_current)
         q_theta.put(theta_current)
@@ -355,7 +375,6 @@ def start_websocket_server(q_pos):
     print("Server started")
     asyncio.get_event_loop().run_forever()
 
-
 def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
     while True:
         if flag.is_set():
@@ -371,9 +390,6 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
 
 # ===================================主函数===================================
 if __name__ == "__main__":
-    # 初始化存储轨迹数据的列表
-    positions = []
-    thetas = []
 
     # 获取当前时间戳
     current_time = time.strftime("%Y%m%d_%H%M", time.localtime())
@@ -393,19 +409,18 @@ if __name__ == "__main__":
     q_theta = multiprocessing.Queue()
 
     # 启动车辆数据预测进程
-    pos_server_process = multiprocessing.Process(target=pos_server, args=(q_pos, q_theta, vehicle_data, log_file, positions, thetas))
+    pos_server_process = multiprocessing.Process(target=pos_server, args=(q_pos, q_theta, vehicle_data, log_file))
     pos_server_process.start()
-
     
     # 启动websocket服务进程
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))
     websocket_server_process.start()
 
-    flag = multiprocessing.Event()
-    flag.clear()  
-    # 启动导航模拟报文发送进程
-    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
-    navigation_simulation_process.start()
+    # flag = multiprocessing.Event()
+    # flag.clear()  
+    # # 启动导航模拟报文发送进程
+    # navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
+    # navigation_simulation_process.start()
     
     
 

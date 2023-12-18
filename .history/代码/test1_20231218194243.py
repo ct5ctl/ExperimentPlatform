@@ -352,6 +352,7 @@ def pos_server(q_pos, q_theta, vehicle_data, log_file):
         # print("传感器数据:", sensor_data)
         # 处理传感器数据，获取当前车辆位置及航向角
         pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
+        pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
         # 写入数据到队列
         q_pos.put(pos_current)
         q_theta.put(theta_current)
@@ -412,7 +413,7 @@ if __name__ == "__main__":
     pos_server_process.start()
     
     # 启动websocket服务进程
-    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
+    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))
     websocket_server_process.start()
 
     # flag = multiprocessing.Event()

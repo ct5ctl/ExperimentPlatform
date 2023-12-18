@@ -412,7 +412,7 @@ if __name__ == "__main__":
     pos_server_process.start()
     
     # 启动websocket服务进程
-    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
+    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略
     websocket_server_process.start()
 
     # flag = multiprocessing.Event()
