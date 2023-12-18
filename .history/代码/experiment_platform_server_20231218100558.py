@@ -300,48 +300,15 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
         sock.close()
 
 def send_track_data_command(q_pos, q_theta, simula_data):
-    # 获取当前数据
     pos_current = q_pos.get()
     theta_current = q_theta.get()
     track_time = simula_data.get_track_time()
     track_number = simula_data.get_track_number()
-
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number + 1)
+    # 在此处新增代码
 
-    # 构建数据帧
-    command = 0x0A5A5C39  # 命令字
-    frame_data = struct.pack('<qqqdddddddddddddddddddd', command, track_time, track_number, 0,
-                             pos_current[0], pos_current[1], pos_current[2],
-                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                             0.0, track_time, track_number, 0, 0.0, theta_current, 0.0, 
-                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-
-    # 创建 socket 对象
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    server_address = ('10.129.41.251', 8080)  # 目标服务器地址和端口
-
-    # 构建帧头
-    frame_header = struct.pack('<I', 0xA5A56666)
-    # 构建帧标志
-    frame_flag = struct.pack('<I', 0)
-    # 计算帧长
-    frame_length = len(frame_data)
-    frame_length_packed = struct.pack('<I', frame_length)
-    # 构建备用字段
-    alternate = struct.pack('<I', 0)
-
-    # 合并数据帧
-    full_frame = frame_header + frame_flag + frame_length_packed + alternate + frame_data
-
-    try:
-        # 发送数据
-        sock.sendto(full_frame, server_address)
-        print("已发送轨迹数据指令")
-    except socket.error as e:
-        print(f"发送数据失败: {e}")
-    finally:
-        sock.close()
+    print("已发送轨迹数据指令")
 
 # ===================================线程任务===================================
 
@@ -415,11 +382,11 @@ if __name__ == "__main__":
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))
     websocket_server_process.start()
 
-    # flag = multiprocessing.Event()
-    # flag.clear()  
-    # # 启动导航模拟报文发送进程
-    # navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
-    # navigation_simulation_process.start()
+    flag = multiprocessing.Event()
+    flag.clear()  
+    # 启动导航模拟报文发送进程
+    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
+    navigation_simulation_process.start()
     
     
 

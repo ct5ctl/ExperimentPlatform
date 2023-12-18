@@ -415,11 +415,11 @@ if __name__ == "__main__":
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))
     websocket_server_process.start()
 
-    # flag = multiprocessing.Event()
-    # flag.clear()  
-    # # 启动导航模拟报文发送进程
-    # navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
-    # navigation_simulation_process.start()
+    flag = multiprocessing.Event()
+    flag.clear()  
+    # 启动导航模拟报文发送进程
+    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
+    navigation_simulation_process.start()
     
     
 

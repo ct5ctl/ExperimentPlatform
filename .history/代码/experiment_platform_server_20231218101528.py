@@ -314,8 +314,9 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     frame_data = struct.pack('<qqqdddddddddddddddddddd', command, track_time, track_number, 0,
                              pos_current[0], pos_current[1], pos_current[2],
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                             0.0, track_time, track_number, 0, 0.0, theta_current, 0.0, 
-                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+                             0.0, track_time, track_number, 0, 0.0, 0.0, 0.0, 
+                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                             theta_current[0], theta_current[1], theta_current[2])
 
     # 创建 socket 对象
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -415,11 +416,11 @@ if __name__ == "__main__":
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))
     websocket_server_process.start()
 
-    # flag = multiprocessing.Event()
-    # flag.clear()  
-    # # 启动导航模拟报文发送进程
-    # navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
-    # navigation_simulation_process.start()
+    flag = multiprocessing.Event()
+    flag.clear()  
+    # 启动导航模拟报文发送进程
+    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
+    navigation_simulation_process.start()
     
     
 
