@@ -368,8 +368,7 @@ def start_websocket_server(q_pos):
             pass
 
     # 启动 WebSocket 服务器
-    # start_server = websockets.serve(echo, "192.168.229.125", 62111)
-    start_server = websockets.serve(echo, "192.168.8.125", 9876)
+    # start_server = websockets.serve(echo, "192.168.229.125", 61111)
     # start_server = websockets.serve(echo, "127.0.0.1", 18765)
     asyncio.get_event_loop().run_until_complete(start_server)
     print("Server started")
@@ -413,7 +412,7 @@ if __name__ == "__main__":
     pos_server_process.start()
     
     # 启动websocket服务进程
-    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
+    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos))
     websocket_server_process.start()
 
     # flag = multiprocessing.Event()
