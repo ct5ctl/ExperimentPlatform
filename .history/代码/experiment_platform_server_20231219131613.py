@@ -240,7 +240,7 @@ async def send_message(websocket, q_pos):
             "data": f'[[{pos_current[0]},{pos_current[1]},{pos_current[2]}]]'  # Convert set to list here
         }
 
-        print("websocket send message:", message)
+        print("message:", message")
         
         # 发送消息给客户端
         await websocket.send(json.dumps(message))
