@@ -237,7 +237,7 @@ async def send_message(websocket, q_pos):
 
         message = {
             "eventName": "eventValue",
-            "data": [[{pos_current[0]},{pos_current[1]},{pos_current[2]}]]
+            "data": [[{pos_current[0]},{pos_current[1]},{pos_current[2]}]]'
         }
 
         print("websocket send message:", message)
