@@ -361,7 +361,7 @@ def pos_server(q_pos, q_theta, vehicle_data, log_file):
 
 
 def start_websocket_server(q_pos):
-    
+    print("1")
     async def echo(websocket, path):
         try:
             await send_message(websocket, q_pos)

@@ -351,6 +351,7 @@ def pos_server(q_pos, q_theta, vehicle_data, log_file):
         # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
         # print("传感器数据:", sensor_data)
         # 处理传感器数据，获取当前车辆位置及航向角
+        pos_current = 
         pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
         # 写入数据到队列
         q_pos.put(pos_current)
@@ -361,7 +362,6 @@ def pos_server(q_pos, q_theta, vehicle_data, log_file):
 
 
 def start_websocket_server(q_pos):
-    
     async def echo(websocket, path):
         try:
             await send_message(websocket, q_pos)
