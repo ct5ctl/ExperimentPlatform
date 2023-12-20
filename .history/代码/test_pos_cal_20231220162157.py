@@ -7,7 +7,7 @@ import math
 # --------------------------------------计算当前位置及航向角    
 time_slot = 0.1
 
-def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2.875, time_slot = 0.1):
+def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2.0, time_slot = 0.1):
     speed_m_per_s = speed * 1000 / 3600
 
     # 如果wheel_angle等于0，表示车辆直行
@@ -83,6 +83,6 @@ initial_angle = 270  # Set your initial angle here
 vehicle_speed = 10  # Set your vehicle speed here
 wheel_angle = 0  # Set your wheel angle here
 time_step = 0.1  # Set your time slot here
-num_iterations = 1  # Set the number of iterations/steps
+num_iterations = 10  # Set the number of iterations/steps
 
 plot_vehicle_trajectory(initial_position, initial_angle, vehicle_speed, wheel_angle, time_step, num_iterations)
