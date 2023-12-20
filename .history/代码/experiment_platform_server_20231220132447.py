@@ -354,7 +354,7 @@ def pos_server(q_pos, q_theta, vehicle_data, log_file):
         # pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
         # test
         pos_current = vehicle_data.get_pos_current()
-        theta_current = vehicle_data.get_theta_current()
+        theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
         # 写入数据到队列
         q_pos.put(pos_current)
         q_theta.put(theta_current)

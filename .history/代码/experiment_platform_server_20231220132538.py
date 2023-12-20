@@ -22,7 +22,7 @@ time_slot = 0.1
 # 车辆数据类
 class VehicleData:
     def __init__(self):
-        self.pos_current = [ 116.38553266, 39.90440998, 0 ]  # 初始化为默认值
+        self.pos_current = [[ 116.38553266, 39.90440998, 0 ]]  # 初始化为默认值
         self.theta_current = 270  # 初始化为默认值
         self.speed = 0  # 初始化为默认值
 

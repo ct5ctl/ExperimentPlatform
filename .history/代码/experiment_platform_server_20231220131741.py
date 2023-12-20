@@ -350,11 +350,10 @@ def send_track_data_command(q_pos, q_theta, simula_data):
 def pos_server(q_pos, q_theta, vehicle_data, log_file):
     while True:
         sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
-        # # 处理传感器数据，获取当前车辆位置及航向角
-        # pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
-        # test
-        pos_current = vehicle_data.get_pos_current()
-        theta_current = vehicle_data.get_theta_current()
+        # print("last_moment_pos:" + str(last_moment_pos), "\nlast_moment_theta:" + str(last_moment_theta))
+        # print("传感器数据:", sensor_data)
+        # 处理传感器数据，获取当前车辆位置及航向角
+        pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
         # 写入数据到队列
         q_pos.put(pos_current)
         q_theta.put(theta_current)
@@ -371,7 +370,7 @@ def start_websocket_server(q_pos):
             pass
 
     # 启动 WebSocket 服务器
-    # start_server = websockets.serve(echo, "192.168.229.125", 9876)
+    # start_server = websockets.serve(echo, "192.168.229.125", 9876)、
     # start_server = websockets.serve(echo, "192.168.8.125", 9876)
     start_server = websockets.serve(echo, "127.0.0.1", 18765)
     asyncio.get_event_loop().run_until_complete(start_server)
