@@ -66,36 +66,45 @@ class SimulaData:
 
 # ===================================线程1子任务===================================
 # --------------------------------------计算当前位置及航向角    
-def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2.785):
-    # 转换角度为弧度
-    radian_theta = math.radians(last_moment_theta)
-    radian_wheel_angle = math.radians(wheel_angle)
+def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base, time_slot = 0.1):
+    speed_m_per_s = speed * 1000 / 3600
 
-    # Calculate angular speed
-    angular_speed = speed / wheel_base * math.tan(radian_wheel_angle)
+    # 如果wheel_angle等于0，表示车辆直行
+    if wheel_angle == 0:
+        # 计算直行的距离
+        distance = speed_m_per_s * time_slot
+        # 转换theta为弧度
+        theta_radian = math.radians(last_moment_theta)
+        dx = distance * math.sin(theta_radian)
+        dy = distance * math.cos(theta_radian)
+        next_theta = last_moment_theta
+    else:
+        # 转换wheel_angle为弧度
+        wheel_angle_radian = math.radians(wheel_angle)
+        # 计算以车辆为圆心的弧线半径R
+        R = wheel_base / math.tan(abs(wheel_angle_radian))
+        # 计算车辆实际行驶的弧长distance
+        distance = speed_m_per_s * time_slot
+        # 计算车辆经过的弧线对应圆心角alpha（弧度）
+        alpha = distance / R
+        # 计算经纬度变化
+        dx = R * math.sin(alpha) if wheel_angle > 0 else -R * math.sin(alpha)
+        dy = R * (1 - math.cos(alpha))
+        # 计算下一时刻的theta
+        next_theta = (last_moment_theta - math.degrees(alpha)) if wheel_angle > 0 else (last_moment_theta + math.degrees(alpha))
+        # Ensure next_theta is within 0~360
+        next_theta %= 360
 
-    # 计算下一时刻的theta
-    next_theta = last_moment_theta + math.degrees(angular_speed * time_slot)
+    # 一个纬度上距离1km对应的角度变化
+    lat_to_km = 1 / 111
+    # 一个经度上距离1km对应的角度变化
+    lon_to_km = 1 / (111 * math.cos(math.radians(last_moment_pos[1])))
 
-    # 标准化theta到0-360度
-    next_theta %= 360
-
-    # 转换速度为m/s
-    speed_m_per_s = speed / 3.6
-
-    # 使用公式 dx = vt * cos(theta) 和 dy = vt * sin(theta) 计算下一位置
-    dsp_x = speed_m_per_s * time_slot * math.cos(radian_theta)
-    dsp_y = speed_m_per_s * time_slot * math.sin(radian_theta)
-
-    # 地球半径（单位：千米） 经度116.38553266纬度39.90440998附近的地球半径
-    earth_radius_km = 6371.01
-
-    # 计算经纬度度数（注意要将半径乘以2pi转换为千米）
-    ds_longitude = dsp_x / (2 * math.pi * earth_radius_km) * 360
-    ds_latitude = dsp_y / (2 * math.pi * earth_radius_km) * 360
-
+    # 计算经纬度变化对应的角度变化
+    delta_lon = dx * lat_to_km
+    delta_lat = dy * lon_to_km
     # 计算下一时刻的位置
-    next_pos = [last_moment_pos[0] + ds_longitude, last_moment_pos[1] + ds_latitude, 0]
+    next_pos = [last_moment_pos[0]+delta_lon, last_moment_pos[1]+delta_lat, 0]
 
     return next_pos, next_theta
 

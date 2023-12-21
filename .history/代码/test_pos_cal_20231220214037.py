@@ -81,9 +81,9 @@ def plot_vehicle_trajectory(initial_pos, initial_theta, speed, wheel_angle, time
 # Example usage:
 initial_position = [ 116.38553266, 39.90440998, 0 ]  # Set your initial position here
 initial_angle = 180  # Set your initial angle here
-vehicle_speed = 5  # Set your vehicle speed here
+vehicle_speed = 10  # Set your vehicle speed here
 wheel_angle = 0  # Set your wheel angle here
 time_step = 0.1  # Set your time slot here
-num_iterations = 100  # Set the number of iterations/steps
+num_iterations = 10  # Set the number of iterations/steps
 
 plot_vehicle_trajectory(initial_position, initial_angle, vehicle_speed, wheel_angle, time_step, num_iterations)
