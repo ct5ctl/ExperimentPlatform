@@ -65,50 +65,83 @@ class SimulaData:
     
 
 # ===================================线程1子任务===================================
-# --------------------------------------计算当前位置及航向角    
-def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2.785):
-    b = 1303.304018485985
-    speed_m_per_s = speed * 1000 / 3600
+# --------------------------------------根据偏移分量计算当前位置   
+def calculate_coordinates(last_moment_pos, last_moment_theta, wheel_angle, theta_direction, theta_vertical_direction, b):
+    # 将角度转换为弧度
+    theta_rad = math.radians(last_moment_theta)
+    
+    # 计算点 B 的经纬度坐标变化量
+    delta_longitude = theta_direction * math.cos(theta_rad) / 111.32  # 每经度对应的距离约为111.32 km
+    delta_latitude = theta_direction * math.sin(theta_rad) / (111.32 * math.cos(math.radians(last_moment_pos[1])))  # 每纬度对应的距离约为111.32 km
+    
+    # 计算点 B 的经纬度坐标
+    b_longitude = last_moment_pos[0] + delta_longitude / b
+    b_latitude = last_moment_pos[1] + delta_latitude / b
+    
+    # 计算 AB 的单位向量
+    ab_unit_longitude = delta_longitude
+    ab_unit_latitude = delta_latitude
+    ab_magnitude = math.sqrt(ab_unit_longitude ** 2 + ab_unit_latitude ** 2)
+    ab_unit_longitude /= ab_magnitude
+    ab_unit_latitude /= ab_magnitude
+    
+    # 计算 BC 的单位向量，垂直于 AB
+    bc_unit_longitude = -ab_unit_latitude  # 交换经纬度方向确保垂直性质
+    bc_unit_latitude = ab_unit_longitude
+    
+    # 根据 fx 确定方向
+    direction = 1 if wheel_angle > 0 else -1
+    
+    # 计算点 C 的经纬度坐标变化量
+    delta_longitude_c = theta_vertical_direction * bc_unit_longitude / 111.32  # 每经度对应的距离约为111.32 km
+    delta_latitude_c = theta_vertical_direction * bc_unit_latitude / (111.32 * math.cos(math.radians(b_latitude)))  # 每纬度对应的距离约为111.32 km
+    
+    # 计算点 C 的经纬度坐标
+    c_longitude = b_longitude + direction * delta_longitude_c / b
+    c_latitude = b_latitude + direction * delta_latitude_c / b
+    
+    return c_longitude, c_latitude
 
-    # 如果wheel_angle等于0，表示车辆直行
+# --------------------------------------计算当前位置及航向角 
+def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2.785, time_slot = 0.1):
+    speed_m_per_s = speed * 1000 / 3600
+    b = 1000
     if wheel_angle == 0:
         # 计算直行的距离
         distance = speed_m_per_s * time_slot
-        # 转换theta为弧度
         theta_radian = math.radians(last_moment_theta)
-        dx = distance * math.sin(theta_radian)
-        dy = distance * math.cos(theta_radian)
+        dx = distance * math.cos(theta_radian)
+        dy = distance * math.sin(theta_radian)
         next_theta = last_moment_theta
+
+        lat_to_km = 1 / 111
+        lon_to_km = 1 / (111 * math.cos(math.radians(last_moment_pos[1])))
+        delta_lon = dx * lat_to_km / b
+        delta_lat = dy * lon_to_km / b
+        next_pos = [last_moment_pos[0]+delta_lon, last_moment_pos[1]+delta_lat, 0]
     else:
-        # 转换wheel_angle为弧度
         wheel_angle_radian = math.radians(wheel_angle)
-        # 计算以车辆为圆心的弧线半径R
+        # Calculate radius of turn
         R = wheel_base / math.tan(abs(wheel_angle_radian))
-        # 计算车辆实际行驶的弧长distance
+        # Arc distance the vehicle traveled
         distance = speed_m_per_s * time_slot
-        # 计算车辆经过的弧线对应圆心角alpha（弧度）
         alpha = distance / R
-        # 计算经纬度变化
-        dx = R * math.sin(alpha) if wheel_angle > 0 else -R * math.sin(alpha)
-        dy = R * (1 - math.cos(alpha))
-        # 计算下一时刻的theta
-        next_theta = (last_moment_theta - math.degrees(alpha)) if wheel_angle > 0 else (last_moment_theta + math.degrees(alpha))
-        # Ensure next_theta is within 0~360
+
+        # The position change in vehicle's local frame
+        theta_direction = R * math.sin(alpha)
+        theta_vertical_direction = R * (1 - math.cos(alpha))
+
+        # Convert the position change to global frame
+        theta_radian = math.radians(last_moment_theta)
+
+        # Calculate next moment theta
+        next_theta = (last_moment_theta + math.degrees(alpha)) if wheel_angle > 0 else (last_moment_theta - math.degrees(alpha))
         next_theta %= 360
 
-    # 一个纬度上距离1km对应的角度变化
-    lat_to_km = 1 / 111
-    # 一个经度上距离1km对应的角度变化
-    lon_to_km = 1 / (111 * math.cos(math.radians(last_moment_pos[1])))
-
-    # 计算经纬度变化对应的角度变化
-    delta_lon = dx * lat_to_km  /  b
-    delta_lat = dy * lon_to_km  /  b
-    # 计算下一时刻的位置
-    next_pos = [last_moment_pos[0]+delta_lon, last_moment_pos[1]+delta_lat, 0]
+        # 计算位置
+        next_pos = calculate_coordinates(last_moment_pos, last_moment_theta, wheel_angle, theta_direction, theta_vertical_direction, b)
 
     return next_pos, next_theta
-
 
 # --------------------------------------使用泽鹿网页接口获取传感器数据
 def get_query_id():
