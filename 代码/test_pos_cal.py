@@ -3,6 +3,10 @@
 import math
 import matplotlib.pyplot as plt
 import math
+from decimal import Decimal, getcontext
+
+# 设置全局精度
+getcontext().prec = 50
 
 # --------------------------------------计算当前位置及航向角    
 time_slot = 0.1
@@ -13,8 +17,8 @@ def calculate_coordinates(last_moment_pos, last_moment_theta, wheel_angle, theta
     theta_rad = math.radians(last_moment_theta)
     
     # 计算点 B 的经纬度坐标变化量
-    delta_longitude = theta_direction * math.cos(theta_rad) / 111.32  # 每经度对应的距离约为111.32 km
-    delta_latitude = theta_direction * math.sin(theta_rad) / (111.32 * math.cos(math.radians(last_moment_pos[1])))  # 每纬度对应的距离约为111.32 km
+    delta_longitude = Decimal(theta_direction * math.cos(theta_rad) / 111.32)  # 每经度对应的距离约为111.32 km
+    delta_latitude = Decimal(theta_direction * math.sin(theta_rad) / (111.32 * math.cos(math.radians(last_moment_pos[1]))))  # 每纬度对应的距离约为111.32 km
     
     # 计算点 B 的经纬度坐标
     b_longitude = last_moment_pos[0] + delta_longitude / b
@@ -23,44 +27,45 @@ def calculate_coordinates(last_moment_pos, last_moment_theta, wheel_angle, theta
     # 计算 AB 的单位向量
     ab_unit_longitude = delta_longitude
     ab_unit_latitude = delta_latitude
-    ab_magnitude = math.sqrt(ab_unit_longitude ** 2 + ab_unit_latitude ** 2)
+    ab_magnitude = Decimal(math.sqrt(ab_unit_longitude ** 2 + ab_unit_latitude ** 2))
     ab_unit_longitude /= ab_magnitude
     ab_unit_latitude /= ab_magnitude
     
     # 计算 BC 的单位向量，垂直于 AB
-    bc_unit_longitude = -ab_unit_latitude  # 交换经纬度方向确保垂直性质
-    bc_unit_latitude = ab_unit_longitude
+    bc_unit_longitude = Decimal(-ab_unit_latitude)  # 交换经纬度方向确保垂直性质
+    bc_unit_latitude = Decimal(ab_unit_longitude)
     
     # 根据 fx 确定方向
     direction = 1 if wheel_angle > 0 else -1
     
     # 计算点 C 的经纬度坐标变化量
-    delta_longitude_c = theta_vertical_direction * bc_unit_longitude / 111.32  # 每经度对应的距离约为111.32 km
-    delta_latitude_c = theta_vertical_direction * bc_unit_latitude / (111.32 * math.cos(math.radians(b_latitude)))  # 每纬度对应的距离约为111.32 km
+    delta_longitude_c = Decimal(theta_vertical_direction * bc_unit_longitude / Decimal(111.32))  # 每经度对应的距离约为111.32 km
+    delta_latitude_c = Decimal(theta_vertical_direction * bc_unit_latitude / Decimal(111.32 * math.cos(math.radians(b_latitude))))  # 每纬度对应的距离约为111.32 km
     
     # 计算点 C 的经纬度坐标
-    c_longitude = b_longitude + direction * delta_longitude_c / b
-    c_latitude = b_latitude + direction * delta_latitude_c / b
+    c_longitude = Decimal(b_longitude + direction * delta_longitude_c / b)
+    c_latitude = Decimal(b_latitude + direction * delta_latitude_c / b)
     
     return c_longitude, c_latitude
 
 
-def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2.785, time_slot = 0.1):
+def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_angle, wheel_base = 2.785):
+    last_moment_pos = [Decimal(pos) for pos in last_moment_pos]
     speed_m_per_s = speed * 1000 / 3600
     b = 1000
     if wheel_angle == 0:
         # 计算直行的距离
         distance = speed_m_per_s * time_slot
         theta_radian = math.radians(last_moment_theta)
-        dx = distance * math.cos(theta_radian)
-        dy = distance * math.sin(theta_radian)
+        dx = Decimal(distance * math.cos(theta_radian))
+        dy = Decimal(distance * math.sin(theta_radian))
         next_theta = last_moment_theta
 
-        lat_to_km = 1 / 111
-        lon_to_km = 1 / (111 * math.cos(math.radians(last_moment_pos[1])))
-        delta_lon = dx * lat_to_km / b
-        delta_lat = dy * lon_to_km / b
-        next_pos = [last_moment_pos[0]+delta_lon, last_moment_pos[1]+delta_lat, 0]
+        lat_to_km = Decimal(1 / 111)
+        lon_to_km = Decimal(1 / (111 * math.cos(math.radians(last_moment_pos[1]))))
+        delta_lon = Decimal(dx * lat_to_km / b)
+        delta_lat = Decimal(dy * lon_to_km / b)
+        next_pos = [Decimal(last_moment_pos[0]+delta_lon), Decimal(last_moment_pos[1]+delta_lat), 0]
     else:
         wheel_angle_radian = math.radians(wheel_angle)
         # Calculate radius of turn
@@ -71,7 +76,7 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
 
         # The position change in vehicle's local frame
         theta_direction = R * math.sin(alpha)
-        theta_vertical_direction = R * (1 - math.cos(alpha))
+        theta_vertical_direction = Decimal(R * (1 - math.cos(alpha)))
 
         # Convert the position change to global frame
         theta_radian = math.radians(last_moment_theta)
@@ -104,6 +109,7 @@ def plot_vehicle_trajectory(initial_pos, initial_theta, speed, wheel_angle, time
     
     x_values = [pos[0] for pos in positions]
     y_values = [pos[1] for pos in positions]
+    print(positions)
     print("delta_lat:", positions[-1][0] - initial_pos[0])
     print("delta_lon:", positions[-1][1] - initial_pos[1])
     # 使用相同的缩放比例
