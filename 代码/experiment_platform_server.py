@@ -111,40 +111,44 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
     last_moment_pos = [Decimal(pos) for pos in last_moment_pos]
     speed_m_per_s = speed * 1000 / 3600
     b = 1000
-    if wheel_angle == 0:
-        # 计算直行的距离
-        distance = speed_m_per_s * time_slot
-        theta_radian = math.radians(last_moment_theta)
-        dx = Decimal(distance * math.cos(theta_radian))
-        dy = Decimal(distance * math.sin(theta_radian))
+    if speed == 0:
+        next_pos = last_moment_pos
         next_theta = last_moment_theta
-
-        lat_to_km = Decimal(1 / 111)
-        lon_to_km = Decimal(1 / (111 * math.cos(math.radians(last_moment_pos[1]))))
-        delta_lon = Decimal(dx * lat_to_km / b)
-        delta_lat = Decimal(dy * lon_to_km / b)
-        next_pos = [Decimal(last_moment_pos[0]+delta_lon), Decimal(last_moment_pos[1]+delta_lat), 0]
     else:
-        wheel_angle_radian = math.radians(wheel_angle)
-        # Calculate radius of turn
-        R = wheel_base / math.tan(abs(wheel_angle_radian))
-        # Arc distance the vehicle traveled
-        distance = speed_m_per_s * time_slot
-        alpha = distance / R
+        if wheel_angle == 0:
+            # 计算直行的距离
+            distance = speed_m_per_s * time_slot
+            theta_radian = math.radians(last_moment_theta)
+            dx = Decimal(distance * math.cos(theta_radian))
+            dy = Decimal(distance * math.sin(theta_radian))
+            next_theta = last_moment_theta
 
-        # The position change in vehicle's local frame
-        theta_direction = R * math.sin(alpha)
-        theta_vertical_direction = Decimal(R * (1 - math.cos(alpha)))
+            lat_to_km = Decimal(1 / 111)
+            lon_to_km = Decimal(1 / (111 * math.cos(math.radians(last_moment_pos[1]))))
+            delta_lon = Decimal(dx * lat_to_km / b)
+            delta_lat = Decimal(dy * lon_to_km / b)
+            next_pos = [Decimal(last_moment_pos[0]+delta_lon), Decimal(last_moment_pos[1]+delta_lat), 0]
+        else:
+            wheel_angle_radian = math.radians(wheel_angle)
+            # Calculate radius of turn
+            R = wheel_base / math.tan(abs(wheel_angle_radian))
+            # Arc distance the vehicle traveled
+            distance = speed_m_per_s * time_slot
+            alpha = distance / R
 
-        # Convert the position change to global frame
-        theta_radian = math.radians(last_moment_theta)
+            # The position change in vehicle's local frame
+            theta_direction = R * math.sin(alpha)
+            theta_vertical_direction = Decimal(R * (1 - math.cos(alpha)))
 
-        # Calculate next moment theta
-        next_theta = (last_moment_theta + math.degrees(alpha)) if wheel_angle > 0 else (last_moment_theta - math.degrees(alpha))
-        next_theta %= 360
+            # Convert the position change to global frame
+            theta_radian = math.radians(last_moment_theta)
 
-        # 计算位置
-        next_pos = calculate_coordinates(last_moment_pos, last_moment_theta, wheel_angle, theta_direction, theta_vertical_direction, b)
+            # Calculate next moment theta
+            next_theta = (last_moment_theta + math.degrees(alpha)) if wheel_angle > 0 else (last_moment_theta - math.degrees(alpha))
+            next_theta %= 360
+
+            # 计算位置
+            next_pos = calculate_coordinates(last_moment_pos, last_moment_theta, wheel_angle, theta_direction, theta_vertical_direction, b)
 
     return next_pos, next_theta
 
