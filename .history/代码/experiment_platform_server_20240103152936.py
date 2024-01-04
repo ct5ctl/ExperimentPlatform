@@ -114,7 +114,6 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
     if speed == 0:
         next_pos = last_moment_pos
         next_theta = last_moment_theta
-    else:
         if wheel_angle == 0:
             # 计算直行的距离
             distance = speed_m_per_s * time_slot
@@ -468,11 +467,11 @@ if __name__ == "__main__":
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
     websocket_server_process.start()
 
-    # flag = multiprocessing.Event()
-    # flag.clear()  
-    # # 启动导航模拟报文发送进程
-    # navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
-    # navigation_simulation_process.start()
+    flag = multiprocessing.Event()
+    flag.clear()  
+    # 启动导航模拟报文发送进程
+    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
+    navigation_simulation_process.start()
     
     
 

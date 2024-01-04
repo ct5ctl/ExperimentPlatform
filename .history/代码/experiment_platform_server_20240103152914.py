@@ -111,44 +111,41 @@ def calculate_next_pos_theta(last_moment_pos, last_moment_theta, speed, wheel_an
     last_moment_pos = [Decimal(pos) for pos in last_moment_pos]
     speed_m_per_s = speed * 1000 / 3600
     b = 1000
-    if speed == 0:
-        next_pos = last_moment_pos
+    if s
+    if wheel_angle == 0:
+        # 计算直行的距离
+        distance = speed_m_per_s * time_slot
+        theta_radian = math.radians(last_moment_theta)
+        dx = Decimal(distance * math.cos(theta_radian))
+        dy = Decimal(distance * math.sin(theta_radian))
         next_theta = last_moment_theta
+
+        lat_to_km = Decimal(1 / 111)
+        lon_to_km = Decimal(1 / (111 * math.cos(math.radians(last_moment_pos[1]))))
+        delta_lon = Decimal(dx * lat_to_km / b)
+        delta_lat = Decimal(dy * lon_to_km / b)
+        next_pos = [Decimal(last_moment_pos[0]+delta_lon), Decimal(last_moment_pos[1]+delta_lat), 0]
     else:
-        if wheel_angle == 0:
-            # 计算直行的距离
-            distance = speed_m_per_s * time_slot
-            theta_radian = math.radians(last_moment_theta)
-            dx = Decimal(distance * math.cos(theta_radian))
-            dy = Decimal(distance * math.sin(theta_radian))
-            next_theta = last_moment_theta
+        wheel_angle_radian = math.radians(wheel_angle)
+        # Calculate radius of turn
+        R = wheel_base / math.tan(abs(wheel_angle_radian))
+        # Arc distance the vehicle traveled
+        distance = speed_m_per_s * time_slot
+        alpha = distance / R
 
-            lat_to_km = Decimal(1 / 111)
-            lon_to_km = Decimal(1 / (111 * math.cos(math.radians(last_moment_pos[1]))))
-            delta_lon = Decimal(dx * lat_to_km / b)
-            delta_lat = Decimal(dy * lon_to_km / b)
-            next_pos = [Decimal(last_moment_pos[0]+delta_lon), Decimal(last_moment_pos[1]+delta_lat), 0]
-        else:
-            wheel_angle_radian = math.radians(wheel_angle)
-            # Calculate radius of turn
-            R = wheel_base / math.tan(abs(wheel_angle_radian))
-            # Arc distance the vehicle traveled
-            distance = speed_m_per_s * time_slot
-            alpha = distance / R
+        # The position change in vehicle's local frame
+        theta_direction = R * math.sin(alpha)
+        theta_vertical_direction = Decimal(R * (1 - math.cos(alpha)))
 
-            # The position change in vehicle's local frame
-            theta_direction = R * math.sin(alpha)
-            theta_vertical_direction = Decimal(R * (1 - math.cos(alpha)))
+        # Convert the position change to global frame
+        theta_radian = math.radians(last_moment_theta)
 
-            # Convert the position change to global frame
-            theta_radian = math.radians(last_moment_theta)
+        # Calculate next moment theta
+        next_theta = (last_moment_theta + math.degrees(alpha)) if wheel_angle > 0 else (last_moment_theta - math.degrees(alpha))
+        next_theta %= 360
 
-            # Calculate next moment theta
-            next_theta = (last_moment_theta + math.degrees(alpha)) if wheel_angle > 0 else (last_moment_theta - math.degrees(alpha))
-            next_theta %= 360
-
-            # 计算位置
-            next_pos = calculate_coordinates(last_moment_pos, last_moment_theta, wheel_angle, theta_direction, theta_vertical_direction, b)
+        # 计算位置
+        next_pos = calculate_coordinates(last_moment_pos, last_moment_theta, wheel_angle, theta_direction, theta_vertical_direction, b)
 
     return next_pos, next_theta
 
@@ -468,11 +465,11 @@ if __name__ == "__main__":
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
     websocket_server_process.start()
 
-    # flag = multiprocessing.Event()
-    # flag.clear()  
-    # # 启动导航模拟报文发送进程
-    # navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
-    # navigation_simulation_process.start()
+    flag = multiprocessing.Event()
+    flag.clear()  
+    # 启动导航模拟报文发送进程
+    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
+    navigation_simulation_process.start()
     
     
 
