@@ -273,9 +273,8 @@ def process_sensor_data(sensor_data, vehicle_data, log_file):
 
         # Write data to a log file
         with open(log_file, 'a') as file:
-            pos1 = vehicle_data.get_pos_current()
-            pos_as_strings = [str(pos1) for pos1 in pos_current]
-            file.write(f"pos_current: {pos_as_strings}, speed: {speed}, wheel_angle: {wheel_angle}\n")
+            pos_as_strings = [str(item) for item in pos_current]
+            file.write(f"pos_current: {vehicle_data.get_pos_current()}, speed: {speed}, wheel_angle: {wheel_angle}\n")
 
         return pos_current, theta_current
     else:
