@@ -2,6 +2,7 @@ import multiprocessing
 import math
 import socket
 import struct
+import threading
 import time
 import warnings
 import requests
@@ -323,7 +324,7 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
 
     # 构建导航模拟启动指令
     frame_length = 248  # 根据表格中指令结构与参数的总长度确定
-    frame_data = struct.pack('<IIIIIddd', command, simula_date_milliseconds, simula_time, 0,
+    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', command, simula_date_milliseconds, simula_time, 0,
                              pos_current[0], pos_current[1], pos_current[2],
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                              0, 0, 0,
@@ -367,7 +368,7 @@ def send_track_data_command(q_pos, q_theta, simula_data):
 
     # 构建数据帧
     command = 0x0A5A5C39  # 命令字
-    frame_data = struct.pack('<qqqdddddddddddddddddddd', command, track_time, track_number, 0,
+    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', command, track_time, track_number, 0,
                              pos_current[0], pos_current[1], pos_current[2],
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                              0.0, track_time, track_number, 0, 0.0, theta_current, 0.0, 
@@ -399,6 +400,42 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     finally:
         sock.close()
 
+def send_stop_command():
+    # 构建数据帧
+    Command_header = 0x7B7B7B7B    # 指令头
+    command = 0x9099  # 命令字
+    frame_data = struct.pack('<IIII', Command_header, 0, command, 0)
+
+    # 创建 socket 对象
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    server_address = ('10.129.41.251', 8080)  # 目标服务器地址和端口
+
+    # 构建帧头
+    frame_header = struct.pack('<I', 0xA5A56666)
+    # 构建帧标志
+    frame_flag = struct.pack('<I', 0)
+    # 计算帧长
+    frame_length = len(frame_data)
+    frame_length_packed = struct.pack('<I', frame_length)
+    # 构建备用字段
+    alternate = struct.pack('<I', 0)
+
+    # 合并数据帧
+    full_frame = frame_header + frame_flag + frame_length_packed + alternate + frame_data
+
+    try:
+        # 发送数据
+        sock.sendto(full_frame, server_address)
+        print("已发送关闭导航指令")
+    except socket.error as e:
+        print(f"发送关闭导航指令失败: {e}")
+    finally:
+        sock.close()    
+
+def function_to_execute_after():
+    # 这里是进程结束后要执行的代码
+    send_stop_command()
+    print("模拟结束，导航模拟关闭。")
 # ===================================线程任务===================================
 
 def pos_server(q_pos, q_theta, vehicle_data, log_file):
@@ -441,6 +478,9 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
         
         time.sleep(time_slot)  # 轨迹发送频率
 
+def monitor_process(process):
+    process.join()  # 监控进程3，在其关闭时执行function_to_execute_after
+    function_to_execute_after()
 
 # ===================================主函数===================================
 if __name__ == "__main__":
@@ -470,11 +510,14 @@ if __name__ == "__main__":
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
     websocket_server_process.start()
 
-    flag = multiprocessing.Event()
-    flag.clear()  
-    # 启动导航模拟报文发送进程
-    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
-    navigation_simulation_process.start()
+    # flag = multiprocessing.Event()
+    # flag.clear()  
+    # # 启动导航模拟报文发送进程
+    # navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
+    # navigation_simulation_process.start()
+    # # 创建并启动监控线程，在导航模拟结束后发送结束指令
+    # monitor_thread = threading.Thread(target=monitor_process, args=(navigation_simulation_process,))
+    # monitor_thread.start()
     
     
 
