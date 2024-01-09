@@ -325,9 +325,8 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     frame_length = 248  # 根据表格中指令结构与参数的总长度确定
     frame_data = struct.pack('<IIIIIddd', command, simula_date_milliseconds, simula_time, 0,
                              pos_current[0], pos_current[1], pos_current[2],
-                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-                             0, 0, 0,
-                             0.0, theta_current, 0.0,
+                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0,
+                             0, theta_current, 0,
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     
     # 创建 socket 对象
@@ -470,11 +469,11 @@ if __name__ == "__main__":
     websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
     websocket_server_process.start()
 
-    flag = multiprocessing.Event()
-    flag.clear()  
-    # 启动导航模拟报文发送进程
-    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
-    navigation_simulation_process.start()
+    # flag = multiprocessing.Event()
+    # flag.clear()  
+    # # 启动导航模拟报文发送进程
+    # navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
+    # navigation_simulation_process.start()
     
     
 
