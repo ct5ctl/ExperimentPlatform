@@ -420,8 +420,8 @@ def start_websocket_server(q_pos):
             pass
 
     # 启动 WebSocket 服务器
-    start_server = websockets.serve(echo, "192.168.229.125", 9876)
-    # start_server = websockets.serve(echo, "192.168.8.125", 9876)
+    start_server = websockets.serve(echo, "192.168.229.125", 8765)
+    start_server = websockets.serve(echo, "192.168.8.125", 9876)
     # start_server = websockets.serve(echo, "127.0.0.1", 9876)
     asyncio.get_event_loop().run_until_complete(start_server)
     print("Server started")
