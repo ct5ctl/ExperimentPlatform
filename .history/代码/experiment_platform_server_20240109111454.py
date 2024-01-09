@@ -285,12 +285,11 @@ async def send_message(websocket, q_pos):
     while True:
         # 模拟获取位置和朝向数据，这里用一个固定的数据代替
         pos_current = q_pos.get()
-        pos_as_strings = [str(item) for item in pos_current]
         theta_current = 270
-        print("websocket send message:", [list(pos_current)])
+        print("websocket send message:", message)
         message = {
             "eventName": "eventValue",
-            "data": [list(pos_as_strings)]
+            
         }
 
         
@@ -421,8 +420,8 @@ def start_websocket_server(q_pos):
             pass
 
     # 启动 WebSocket 服务器
-    start_server = websockets.serve(echo, "192.168.229.125", 9876)
-    # start_server = websockets.serve(echo, "192.168.8.125", 9876)
+    # start_server = websockets.serve(echo, "192.168.229.125", 9876)
+    start_server = websockets.serve(echo, "192.168.8.125", 9876)
     # start_server = websockets.serve(echo, "127.0.0.1", 9876)
     asyncio.get_event_loop().run_until_complete(start_server)
     print("Server started")
