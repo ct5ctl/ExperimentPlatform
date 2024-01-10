@@ -363,8 +363,8 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     # 获取当前数据
     pos_current = q_pos.get()
     theta_current = q_theta.get()
+    track_time = simula_data.
     track_number = simula_data.get_track_number()
-    track_time = milliseconds_since_2006_01_01(simula_data.get_simula_date()) + track_number * time_slot
 
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number + 1)
