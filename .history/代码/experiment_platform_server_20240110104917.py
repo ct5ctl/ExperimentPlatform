@@ -326,7 +326,7 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
 
     # 构建导航模拟启动指令
     frame_length = 248  # 根据表格中指令结构与参数的总长度确定
-    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(simula_date_milliseconds), int(simula_time), 0,
+    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', command, simula_date_milliseconds, simula_time, 0,
                              pos_current[0], pos_current[1], pos_current[2],
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                              0, 0, 0,
@@ -348,6 +348,7 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     
     # 合并数据帧
     full_frame = frame_header + frame_flag + frame_length_packed + alternate + frame_data
+    print（
 
     try:
         # 发送数据
@@ -370,10 +371,10 @@ def send_track_data_command(q_pos, q_theta, simula_data):
 
     # 构建数据帧
     command = 0x0A5A5C39  # 命令字
-    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(track_time), int(track_number), 0,
+    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', command, track_time, track_number, 0,
                              pos_current[0], pos_current[1], pos_current[2],
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                             0.0, int(track_time), int(track_number), 0, 0.0, theta_current, 0.0, 
+                             0.0, track_time, track_number, 0, 0.0, theta_current, 0.0, 
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
     # 创建 socket 对象
@@ -469,23 +470,21 @@ def start_websocket_server(q_pos):
     asyncio.get_event_loop().run_forever()
 
 def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
-    print("进入导航模拟进程")
+    
     while True:
-        print("进入导航模拟进程")
         if flag.is_set():
             # 非首次执行，发送轨迹数据指令
             send_track_data_command(q_pos, q_theta, simula_data)
         else:
             # 首次执行，发送导航模拟启动指令
-            print("首次执行，发送导航模拟启动指令")
             send_simul_start_command(q_pos, q_theta, simula_data)
             flag.set() 
         
         time.sleep(time_slot)  # 轨迹发送频率
 
-# def monitor_process(process):
-#     process.join()  # 监控进程3，在其关闭时执行function_to_execute_after
-#     function_to_execute_after()
+def monitor_process(process):
+    process.join()  # 监控进程3，在其关闭时执行function_to_execute_after
+    function_to_execute_after()
 
 # ===================================主函数===================================
 if __name__ == "__main__":
@@ -511,18 +510,18 @@ if __name__ == "__main__":
     pos_server_process = multiprocessing.Process(target=pos_server, args=(q_pos, q_theta, vehicle_data, log_file))
     pos_server_process.start()
     
-    # # 启动websocket服务进程
-    # websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
-    # websocket_server_process.start()
+    # 启动websocket服务进程
+    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
+    websocket_server_process.start()
 
     flag = multiprocessing.Event()
     flag.clear()  
     # 启动导航模拟报文发送进程
     navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
     navigation_simulation_process.start()
-    # # 创建并启动监控线程，在导航模拟结束后发送结束指令
-    # monitor_thread = threading.Thread(target=monitor_process, args=(navigation_simulation_process,))
-    # monitor_thread.start()
+    # 创建并启动监控线程，在导航模拟结束后发送结束指令
+    monitor_thread = threading.Thread(target=monitor_process, args=(navigation_simulation_process,))
+    monitor_thread.start()
     
     
 

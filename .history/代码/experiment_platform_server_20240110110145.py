@@ -370,10 +370,10 @@ def send_track_data_command(q_pos, q_theta, simula_data):
 
     # 构建数据帧
     command = 0x0A5A5C39  # 命令字
-    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(track_time), int(track_number), 0,
+    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', command, track_time, track_number, 0,
                              pos_current[0], pos_current[1], pos_current[2],
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                             0.0, int(track_time), int(track_number), 0, 0.0, theta_current, 0.0, 
+                             0.0, track_time, track_number, 0, 0.0, theta_current, 0.0, 
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
     # 创建 socket 对象
