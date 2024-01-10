@@ -367,12 +367,12 @@ def send_track_data_command(q_pos, q_theta, simula_data):
 
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number + 1)
-    pos_new = [ 222, 222, 222 ]
+    pos_new = [ 222, 222, 22 ]
 
     # 构建数据帧
     command = 0x0A5A5C39  # 命令字
     frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(track_time), int(track_number), 0,
-                             pos_new[0], pos_new[1], pos_new[2],
+                             pos_current[0], pos_current[1], pos_current[2],
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                              0.0, int(track_time), int(track_number), 0, 0.0, theta_current, 0.0, 
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
