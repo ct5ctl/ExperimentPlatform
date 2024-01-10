@@ -363,8 +363,8 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     # 获取当前数据
     pos_current = q_pos.get()
     theta_current = q_theta.get()
-    track_number = simula_data.get_track_number() + 1
-    track_time = milliseconds_since_2006_01_01(simula_data.get_simula_date()) + simula_data.get_track_number() * time_slot
+    track_number = simula_data.get_track_number()
+    track_time = milliseconds_since_2006_01_01(simula_data.get_simula_date()) + track_number * time_slot
 
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number + 1)
@@ -485,7 +485,7 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
             print("首次执行，发送导航模拟启动指令")
             send_simul_start_command(q_pos, q_theta, simula_data)
             flag.set() 
-            time.sleep(10)
+            # time.sleep(10)
             print("开始轨迹注入")
         
         time.sleep(time_slot)  # 轨迹发送频率
