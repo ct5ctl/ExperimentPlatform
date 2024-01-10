@@ -396,7 +396,7 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     try:
         # 发送数据
         sock.sendto(full_frame, server_address)
-        print("已发送轨迹数据指令 [", pos_current[0], ",", pos_current[1], ",", pos_current[2], "]")
+        print("已发送轨迹数据指令 [", pos_current[0], pos_current[1], pos_current[2], "]")
     except socket.error as e:
         print(f"发送数据失败: {e}")
     finally:
