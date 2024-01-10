@@ -478,8 +478,7 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
             print("首次执行，发送导航模拟启动指令")
             send_simul_start_command(q_pos, q_theta, simula_data)
             flag.set() 
-            time.sleep(10)
-            print("开始轨迹注入")
+            time.sleep(20)
         
         time.sleep(time_slot)  # 轨迹发送频率
 

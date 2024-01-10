@@ -479,7 +479,7 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
             send_simul_start_command(q_pos, q_theta, simula_data)
             flag.set() 
             time.sleep(10)
-            print("开始轨迹注入")
+            print("kais ")
         
         time.sleep(time_slot)  # 轨迹发送频率
 
