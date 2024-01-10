@@ -364,7 +364,7 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     # 获取当前数据
     pos_current = q_pos.get()
     theta_current = q_theta.get()
-    track_number = simula_data.get_track_number() + 1
+    track_number = simula_data.get_track_number() 
     # track_time = milliseconds_since_2006_01_01(simula_data.get_simula_date()) + simula_data.get_track_number() * time_slot
     track_time = track_number * time_slot
 
