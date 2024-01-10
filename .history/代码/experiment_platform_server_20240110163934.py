@@ -58,7 +58,7 @@ class SimulaData:
     def __init__(self):
         self.simula_date = datetime(2022, 6, 15, 10, 0, 0)      # 仿真日期
         self.simula_time = 360  # 仿真时间，单位：秒
-        self.track_time = milliseconds_since_2006_01_01(simula_date=self.get_simula_date) + time_slot  # 轨迹时间，单位：秒
+        self.track_time = milliseconds_since_2006_01_01(simula_date=self.get_simula_date)  # 轨迹时间，单位：秒
         self.track_number = 1  # 轨迹序号
         
     def get_simula_date(self):
@@ -369,7 +369,6 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number + 1)
     # pos_new = [ 222, 222, 222 ]
-    print("轨迹时间:", track_time, "轨迹序号:", track_number)
 
     # 构建数据帧
     command = 0x0A5A5C39  # 命令字

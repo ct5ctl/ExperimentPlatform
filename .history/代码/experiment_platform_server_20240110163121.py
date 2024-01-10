@@ -42,24 +42,13 @@ class VehicleData:
     def get_theta_current(self):
         return self.theta_current
     
-def milliseconds_since_2006_01_01(simula_date):
-    # 设置起始日期
-    start_date = datetime(2006, 1, 1)
-    
-    # 计算两个日期之间的时间差
-    difference = simula_date - start_date
-    
-    # 转换时间差为毫秒数
-    milliseconds = difference.total_seconds() * 1000
-    
-    return milliseconds
 # 仿真数据类
 class SimulaData:
     def __init__(self):
         self.simula_date = datetime(2022, 6, 15, 10, 0, 0)      # 仿真日期
         self.simula_time = 360  # 仿真时间，单位：秒
-        self.track_time = milliseconds_since_2006_01_01(simula_date=self.get_simula_date) + time_slot  # 轨迹时间，单位：秒
-        self.track_number = 1  # 轨迹序号
+        self.track_time = 2  # 轨迹时间，单位：秒
+        self.track_number = 0  # 轨迹序号
         
     def get_simula_date(self):
         return self.simula_date
@@ -316,7 +305,17 @@ async def send_message(websocket, q_pos):
         await asyncio.sleep(time_slot)  # 100ms
 
 # ===================================线程3子任务===================================
-
+def milliseconds_since_2006_01_01(simula_date):
+    # 设置起始日期
+    start_date = datetime(2006, 1, 1)
+    
+    # 计算两个日期之间的时间差
+    difference = simula_date - start_date
+    
+    # 转换时间差为毫秒数
+    milliseconds = difference.total_seconds() * 1000
+    
+    return milliseconds
 
 def send_simul_start_command(q_pos, q_theta, simula_data):
     simula_date_milliseconds = milliseconds_since_2006_01_01(simula_data.get_simula_date())
@@ -363,13 +362,12 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     # 获取当前数据
     pos_current = q_pos.get()
     theta_current = q_theta.get()
-    track_time = simula_data.get_track_time() 
+    track_time = simula_data.get_track_time()
     track_number = simula_data.get_track_number()
 
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number + 1)
     # pos_new = [ 222, 222, 222 ]
-    print("轨迹时间:", track_time, "轨迹序号:", track_number)
 
     # 构建数据帧
     command = 0x0A5A5C39  # 命令字
