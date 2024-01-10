@@ -490,7 +490,7 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
             time.sleep(10)
             print("开始轨迹注入")
         
-        time.sleep(time_slot)  # 轨迹发送频率
+        time.sleep()  # 轨迹发送频率
 
 def monitor_process(process):
     process.join()  # 监控进程3，在其关闭时执行function_to_execute_after
