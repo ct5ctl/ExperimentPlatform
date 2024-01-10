@@ -22,7 +22,7 @@ getcontext().prec = 50
 
 # ===================================初始参数===================================
 
-time_slot = 0.06
+time_slot = 0.1
 
 # 车辆数据类
 class VehicleData:
@@ -469,7 +469,9 @@ def start_websocket_server(q_pos):
     asyncio.get_event_loop().run_forever()
 
 def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
+    print("进入导航模拟进程")
     while True:
+        print("进入导航模拟进程")
         if flag.is_set():
             # 非首次执行，发送轨迹数据指令
             send_track_data_command(q_pos, q_theta, simula_data)
@@ -518,9 +520,9 @@ if __name__ == "__main__":
     # 启动导航模拟报文发送进程
     navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
     navigation_simulation_process.start()
-    # 创建并启动监控线程，在导航模拟结束后发送结束指令
-    monitor_thread = threading.Thread(target=monitor_process, args=(navigation_simulation_process,))
-    monitor_thread.start()
+    # # 创建并启动监控线程，在导航模拟结束后发送结束指令
+    # monitor_thread = threading.Thread(target=monitor_process, args=(navigation_simulation_process,))
+    # monitor_thread.start()
     
     
 

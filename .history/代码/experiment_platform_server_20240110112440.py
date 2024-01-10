@@ -22,7 +22,7 @@ getcontext().prec = 50
 
 # ===================================初始参数===================================
 
-time_slot = 0.06
+time_slot = 0.1
 
 # 车辆数据类
 class VehicleData:
@@ -469,7 +469,9 @@ def start_websocket_server(q_pos):
     asyncio.get_event_loop().run_forever()
 
 def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
+    print("进入导航模拟进程")
     while True:
+        print("进入导航模拟进程")
         if flag.is_set():
             # 非首次执行，发送轨迹数据指令
             send_track_data_command(q_pos, q_theta, simula_data)
