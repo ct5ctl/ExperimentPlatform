@@ -470,8 +470,8 @@ def start_websocket_server(q_pos):
 
 def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
     while True:
-        # # 触发式执行
-        # send_track_data_command(q_pos, q_theta, simula_data)
+        # 触发式执行
+        send_track_data_command(q_pos, q_theta, simula_data)
 
         # 非触发式执行
         if flag.is_set():
