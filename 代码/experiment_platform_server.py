@@ -43,6 +43,9 @@ class VehicleData:
     def get_theta_current(self):
         return self.theta_current
     
+    def get_speed_current(self):
+        return self.speed
+    
 def milliseconds_since_2006_01_01(simula_date):
     # 设置起始日期
     start_date = datetime(2006, 1, 1)
@@ -361,17 +364,19 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     finally:
         sock.close()
 
-def send_track_data_command(q_pos, q_theta, simula_data):
+def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     # 获取当前数据
     pos_current = q_pos.get()
     theta_current = q_theta.get()
     track_number = simula_data.get_track_number() + 1
     track_time = track_number * time_slot * 1000
-    # track_time = track_number * time_slot + 
+    speed = vehicle_data.get_speed_current()
+    theta = vehicle_data.get_theta_current()
+    # 计算x y z轴速度
+
 
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number)
-    # pos_new = [ 222, 222, 222 ]
     print("轨迹时间:", track_time, "轨迹序号:", track_number)
 
     # 构建数据帧
@@ -475,7 +480,7 @@ def start_websocket_server(q_pos):
     print("Server started")
     asyncio.get_event_loop().run_forever()
 
-def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
+def navigation_simulation_server(q_pos, q_theta, flag, simula_data, vehicle_data):
     while True:
         # # 触发式执行
         # send_track_data_command(q_pos, q_theta, simula_data)
@@ -483,7 +488,7 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data):
         # 非触发式执行
         if flag.is_set():
             # 非首次执行，发送轨迹数据指令
-            send_track_data_command(q_pos, q_theta, simula_data)
+            send_track_data_command(q_pos, q_theta, simula_data, vehicle_data)
         else:
             # 首次执行，发送导航模拟启动指令
             print("首次执行，发送导航模拟启动指令")
@@ -529,7 +534,7 @@ if __name__ == "__main__":
     flag = multiprocessing.Event()
     flag.clear()  
     # 启动导航模拟报文发送进程
-    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data))
+    navigation_simulation_process = multiprocessing.Process(target=navigation_simulation_server, args=(q_pos, q_theta, flag, simula_data, vehicle_data))
     navigation_simulation_process.start()
     # 创建并启动监控线程，在导航模拟结束后发送结束指令
     monitor_thread = threading.Thread(target=monitor_process, args=(navigation_simulation_process,))
