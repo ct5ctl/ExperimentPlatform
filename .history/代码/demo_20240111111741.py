@@ -1,20 +1,8 @@
 
 
 import multiprocessing
-import socket
-import struct
 import time
 time_slot = 0.1
-
-def milliseconds_since_2006_01_01(simula_date):
-    # 设置起始日期
-    start_date = datetime(2006, 1, 1)
-    
-    # 计算两个日期之间的时间差
-    difference = simula_date - start_date
-    
-    # 转换时间差为毫秒数
-    milliseconds = difference.total_seconds() * 1000
 
 def send_simul_start_command(q_pos, q_theta, simula_data):
     simula_date_milliseconds = milliseconds_since_2006_01_01(simula_data.get_simula_date())

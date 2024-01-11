@@ -2,7 +2,6 @@
 
 import multiprocessing
 import socket
-import struct
 import time
 time_slot = 0.1
 
