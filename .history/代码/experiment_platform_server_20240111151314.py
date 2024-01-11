@@ -284,6 +284,7 @@ def process_sensor_data(sensor_data, vehicle_data, log_file):
         # 更新 VehicleData 实例中的数据
         speed_x = float(speed) * math.cos(math.radians(theta_current))
         speed_y = float(speed) * math.sin(math.radians(theta_current))
+        print("speed_xtype: ", speed_x, "speed_ytype: ", speed_y)
         vehicle_data.update_data(pos_current, theta_current, speed, speed_x, speed_y)
         print("vehicle_data.get_pos_current(): " , vehicle_data.get_pos_current(), "vehicle_data.get_theta_current(): ", vehicle_data.get_theta_current())
 
@@ -378,8 +379,9 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     track_number = simula_data.get_track_number() + 1
     track_time = track_number * time_slot * 1000
     speed_x, speed_y = vehicle_data.get_speed_current()
-    # print("speed_x: ", speed_x, "speed_y: ", speed_y)
-    # print("speed_xtype: ", type(speed_x), "speed_ytype: ", type(speed_y))
+    print("speed_x: ", speed_x, "speed_y: ", speed_y)
+    print("speedx: ", type(speed_x), "speedy: ", type(speed_y))
+   
 
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number)

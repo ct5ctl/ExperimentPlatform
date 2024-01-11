@@ -31,16 +31,13 @@ class VehicleData:
         self.pos_current = [ 116.38553266, 39.90440998, 0 ]  # 初始化为默认值
         self.theta_current = 180  # 初始化为默认值
         self.speed = 0  # 初始化为默认值
-        self.speed_x = 0
-        self.speed_y = 0
-        
+        speed_x = 0
+        speed_y = 0
 
-    def update_data(self, pos, theta, speed, speed_x, speed_y):
+    def update_data(self, pos, theta, speed):
         self.pos_current = pos
         self.theta_current = theta
         self.speed = speed
-        self.speed_x = speed_x
-        self.speed_y = speed_y
 
     def get_pos_current(self):
         return self.pos_current
@@ -49,7 +46,7 @@ class VehicleData:
         return self.theta_current
     
     def get_speed_current(self):
-        return self.speed_x, self.speed_y
+        return self.speed
     
 def milliseconds_since_2006_01_01(simula_date):
     # 设置起始日期
@@ -282,9 +279,9 @@ def process_sensor_data(sensor_data, vehicle_data, log_file):
         # 获取车辆当前位置、航向角
         pos_current, theta_current = calculate_next_pos_theta(vehicle_data.get_pos_current(), vehicle_data.get_theta_current(), float(speed), wheel_angle)
         # 更新 VehicleData 实例中的数据
-        speed_x = float(speed) * math.cos(math.radians(theta_current))
-        speed_y = float(speed) * math.sin(math.radians(theta_current))
-        vehicle_data.update_data(pos_current, theta_current, speed, speed_x, speed_y)
+        speed_x = speed
+        
+        vehicle_data.update_data(pos_current, theta_current, speed)
         print("vehicle_data.get_pos_current(): " , vehicle_data.get_pos_current(), "vehicle_data.get_theta_current(): ", vehicle_data.get_theta_current())
 
         # debug
@@ -377,9 +374,10 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     theta_current = q_theta.get()
     track_number = simula_data.get_track_number() + 1
     track_time = track_number * time_slot * 1000
-    speed_x, speed_y = vehicle_data.get_speed_current()
-    # print("speed_x: ", speed_x, "speed_y: ", speed_y)
-    # print("speed_xtype: ", type(speed_x), "speed_ytype: ", type(speed_y))
+    speed = vehicle_data.get_speed_current()
+    theta = vehicle_data.get_theta_current()
+    # 计算x y z轴速度
+
 
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number)
@@ -389,7 +387,7 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     command = 0x0A5A5C39  # 命令字
     frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(track_time), int(track_number), 0,
                              pos_current[0], pos_current[1], pos_current[2],
-                             speed_x, speed_y, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                              0.0, 0, 0, 0, 0.0, theta_current, 0.0, 
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 

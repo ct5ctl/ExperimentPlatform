@@ -381,6 +381,8 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     # print("speed_x: ", speed_x, "speed_y: ", speed_y)
     # print("speed_xtype: ", type(speed_x), "speed_ytype: ", type(speed_y))
 
+   
+
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number)
     print("轨迹时间:", track_time, "轨迹序号:", track_number)
