@@ -57,7 +57,7 @@ def milliseconds_since_2006_01_01(simula_date):
 # 仿真数据类
 class SimulaData:
     def __init__(self):
-        self.simula_date = datetime(2020, 6, 15, 10, 0, 0)      # 仿真日期
+        self.simula_date = datetime(2022, 6, 15, 10, 0, 0)      # 仿真日期
         self.simula_time = 360  # 仿真时间，单位：秒
         self.track_time = 0  # 轨迹时间，单位：秒
         self.track_number = 0  # 轨迹序号
