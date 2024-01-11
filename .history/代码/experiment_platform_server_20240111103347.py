@@ -365,7 +365,7 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     pos_current = q_pos.get()
     theta_current = q_theta.get()
     track_number = simula_data.get_track_number() + 1
-    track_time = track_number * simula_data.get_track_number() * 1000
+    track_time = milliseconds_since_2006_01_01(simula_data.get_simula_date()) + track_number * time_slot * 1000
     # track_time = track_number * time_slot + 
 
     # 更新轨迹时间和轨迹序号
@@ -378,7 +378,7 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(track_time), int(track_number), 0,
                              pos_current[0], pos_current[1], pos_current[2],
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                             0.0, 0, 0, 0, 0.0, theta_current, 0.0, 
+                             0.0, int(track_time), 0, 0, 0.0, theta_current, 0.0, 
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
     # 创建 socket 对象
