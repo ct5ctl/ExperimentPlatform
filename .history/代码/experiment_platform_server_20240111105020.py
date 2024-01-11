@@ -2,7 +2,6 @@ import multiprocessing
 import math
 import socket
 import struct
-import sys
 import threading
 import time
 import warnings
@@ -328,6 +327,7 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     command = 0x0ABB9011
 
     # 构建导航模拟启动指令
+    frame_length = 248  # 根据表格中指令结构与参数的总长度确定
     frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(simula_date_milliseconds), int(simula_time), 0,
                              pos_current[0], pos_current[1], pos_current[2],
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
@@ -345,8 +345,8 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     frame_flag = struct.pack('<I', 0)
     # 构建帧长
     # 计算帧长
-    frame_length = sys.getsizeof(frame_data)
-    print("frame_length:", frame_length)
+    frame_length = len(frame_data)
+    frame_length_packed = struct.pack('<I', frame_length)
     frame_length_packed = struct.pack('<I', frame_length)
     # 构建备用字段
     alternate = struct.pack('<I', 0)
@@ -393,7 +393,7 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     # 构建帧标志
     frame_flag = struct.pack('<I', 0)
     # 计算帧长
-    frame_length = sys.getsizeof(frame_data)
+    frame_length = len(frame_data)
     frame_length_packed = struct.pack('<I', frame_length)
     # 构建备用字段
     alternate = struct.pack('<I', 0)
@@ -425,7 +425,7 @@ def send_stop_command():
     # 构建帧标志
     frame_flag = struct.pack('<I', 0)
     # 计算帧长
-    frame_length = sys.getsizeof(frame_data)
+    frame_length = len(frame_data)
     frame_length_packed = struct.pack('<I', frame_length)
     # 构建备用字段
     alternate = struct.pack('<I', 0)

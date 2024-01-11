@@ -2,7 +2,6 @@ import multiprocessing
 import math
 import socket
 import struct
-import sys
 import threading
 import time
 import warnings
@@ -345,8 +344,7 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     frame_flag = struct.pack('<I', 0)
     # 构建帧长
     # 计算帧长
-    frame_length = sys.getsizeof(frame_data)
-    print("frame_length:", frame_length)
+    frame_length = len(frame_data)
     frame_length_packed = struct.pack('<I', frame_length)
     # 构建备用字段
     alternate = struct.pack('<I', 0)
@@ -393,7 +391,7 @@ def send_track_data_command(q_pos, q_theta, simula_data):
     # 构建帧标志
     frame_flag = struct.pack('<I', 0)
     # 计算帧长
-    frame_length = sys.getsizeof(frame_data)
+    frame_length = len(frame_data)
     frame_length_packed = struct.pack('<I', frame_length)
     # 构建备用字段
     alternate = struct.pack('<I', 0)
@@ -425,7 +423,7 @@ def send_stop_command():
     # 构建帧标志
     frame_flag = struct.pack('<I', 0)
     # 计算帧长
-    frame_length = sys.getsizeof(frame_data)
+    frame_length = len(frame_data)
     frame_length_packed = struct.pack('<I', frame_length)
     # 构建备用字段
     alternate = struct.pack('<I', 0)
