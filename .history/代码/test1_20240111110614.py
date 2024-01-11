@@ -1,5 +1,4 @@
 import struct
-import sys
 
 # Your data and format string
 command = 1
@@ -17,6 +16,5 @@ frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd',
 
 # Get the length in bytes
 length_in_bytes = len(frame_data)
-frame_length = len(frame_data)
+
 print("Number of bytes:", length_in_bytes)
-print("Number of bytes:", frame_length)
