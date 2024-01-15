@@ -382,8 +382,8 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     pos_current = q_pos.get()
     theta_current = q_theta.get()
     track_number = simula_data.get_track_number() + 1
-    track_time = simula_data.get_track_number() * time_slot * 1000   # 从1个时间间隙开始
-    # track_time = milliseconds_since_2006_01_01(simula_data.get_simula_date())  # 从仿真时间开始 
+    # track_time = track_number * time_slot * 1000   # 从1个时间间隙开始
+    track_time = milliseconds_since_2006_01_01(simula_data.get_simula_date())  # 从仿真时间开始 
     speed_x, speed_y = vehicle_data.get_speed_current()
     # print("speed_x: ", speed_x, "speed_y: ", speed_y)
     # print("speed_xtype: ", type(speed_x), "speed_ytype: ", type(speed_y))

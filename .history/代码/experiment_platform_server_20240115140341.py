@@ -366,7 +366,7 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     # 将 full_frame 的内容以十六进制形式存储在文本文件中
     with open('frame_data_hex.txt', 'a') as file:  # 'a' 用于追加到文件
         hex_data = full_frame.hex()  # 将二进制数据转换为十六进制字符串
-        file.write('==============' + hex_data + '\n')  # 将十六进制字符串写入文件
+        file.write('==============启动指令' + hex_data + '\n')  # 将十六进制字符串写入文件
 
     try:
         # 发送数据
@@ -382,8 +382,8 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     pos_current = q_pos.get()
     theta_current = q_theta.get()
     track_number = simula_data.get_track_number() + 1
-    track_time = simula_data.get_track_number() * time_slot * 1000   # 从1个时间间隙开始
-    # track_time = milliseconds_since_2006_01_01(simula_data.get_simula_date())  # 从仿真时间开始 
+    # track_time = track_number * time_slot * 1000   # 从1个时间间隙开始
+    track_time = milliseconds_since_2006_01_01(simula_data.get_simula_date())  # 从仿真时间开始 
     speed_x, speed_y = vehicle_data.get_speed_current()
     # print("speed_x: ", speed_x, "speed_y: ", speed_y)
     # print("speed_xtype: ", type(speed_x), "speed_ytype: ", type(speed_y))
@@ -421,7 +421,7 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     # 将 full_frame 的内容以十六进制形式存储在文本文件中
     with open('frame_data_hex.txt', 'a') as file:  # 'a' 用于追加到文件
         hex_data = full_frame.hex()  # 将二进制数据转换为十六进制字符串
-        file.write('---------' + hex_data + '\n')  # 将十六进制字符串写入文件
+        file.write('==============启动指令' + hex_data + '\n')  # 将十六进制字符串写入文件
     try:
         # 发送数据
         sock.sendto(full_frame, server_address)
