@@ -394,9 +394,9 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number)
     print("轨迹时间:", track_time, "轨迹序号:", track_number)
-    # for i, pos in enumerate(pos_current):
-    #     pos_current[i] = float(200.1)
-    #     print(pos_current[i])
+    for i, pos in enumerate(pos_current):
+        pos_current[i] = float(pos_current[i])
+        print(pos_current[i])
 
     # 构建数据帧
     command = 0x0A5A5C39  # 命令字
