@@ -337,7 +337,7 @@ def geodetic_to_ecef(lon, lat, h):
     N = Decimal(a_E / w)
     X = Decimal(N + h) * Decimal(math.cos(lat)) * Decimal(math.cos(lon))
     Y = Decimal(N + h) * Decimal(math.cos(lat)) * Decimal(math.sin(lon))
-    Z = Decimal(N * (1 - e2) + h) * Decimal(math.sin(lat))
+    Z = Decimal(N * (1 - e2) + h) * math.sin(lat)
     
     return X, Y, Z
 

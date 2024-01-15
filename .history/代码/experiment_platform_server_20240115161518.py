@@ -326,19 +326,27 @@ async def send_message(websocket, q_pos):
         # 等待一段时间再发送下一条消息
         await asyncio.sleep(time_slot)  # 100ms
 
-# ===================================线程3子任务===================================
-def geodetic_to_ecef(lon, lat, h):
-    lat = lat * Decimal(math.pi) / 180
-    lon = lon * Decimal(math.pi) / 180
-    Alpha_E = 0.335281066475e-2
-    a_E = 6378137.0
-    e2 = Decimal(2 * Alpha_E - Alpha_E * Alpha_E)
-    w = math.sqrt(1 - e2 * Decimal(math.sin(lat)) * Decimal(math.sin(lat)))
-    N = Decimal(a_E / w)
-    X = Decimal(N + h) * Decimal(math.cos(lat)) * Decimal(math.cos(lon))
-    Y = Decimal(N + h) * Decimal(math.cos(lat)) * Decimal(math.sin(lon))
-    Z = Decimal(N * (1 - e2) + h) * Decimal(math.sin(lat))
-    
+def geodetic_to_ecef(lat, lon, h):
+    # WGS 84 ellipsiod constants
+    a = 6378137  # semi-major axis in meters
+    f = 1 / 298.257223563  # flattening
+    b = a * (1 - f)  # semi-minor axis
+
+    # Convert latitude and longitude to radians
+    lat_rad = math.radians(lat)
+    lon_rad = math.radians(lon)
+
+    # Calculate the square of the first eccentricity
+    e_sq = (a**2 - b**2) / a**2
+
+    # Calculate the radius of curvature in the prime vertical
+    N = a / math.sqrt(1 - e_sq * math.sin(lat_rad)**2)
+
+    # Calculate ECEF coordinates
+    X = (N + h) * math.cos(lat_rad) * math.cos(lon_rad)
+    Y = (N + h) * math.cos(lat_rad) * math.sin(lon_rad)
+    Z = (N * (1 - e_sq) + h) * math.sin(lat_rad)
+
     return X, Y, Z
 
 def send_simul_start_command(q_pos, q_theta, simula_data):
@@ -351,11 +359,10 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     # for i, pos in enumerate(pos_current):
     #     pos_current[i] = float(pos_current[i])
     #     # pos_current[i] = int(pos_current[i] * 10**10) / 10**10
-    x, y, z = geodetic_to_ecef(pos_current[0], pos_current[1], pos_current[2])
 
     # 构建导航模拟启动指令
     frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(simula_date_milliseconds), int(simula_time), 0,
-                             x, y, z, 
+                             pos_current[0], pos_current[1], pos_current[2], 
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                              0, 0, 0,
                              0.0, theta_current, 0.0,
@@ -410,12 +417,11 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     # for i, pos in enumerate(pos_current):
     #     pos_current[i] = float(200.1)
     #     print(pos_current[i])
-    x, y, z = geodetic_to_ecef(pos_current[0], pos_current[1], pos_current[2])
 
     # 构建数据帧
     command = 0x0A5A5C39  # 命令字
     frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(track_time), int(track_number), 0,
-                             x, y, z,
+                             pos_current[0], pos_current[1], pos_current[2],
                              speed_x, speed_y, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                              0.0, 0, 0, 0, 0.0, theta_current, 0.0, 
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)

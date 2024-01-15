@@ -1,7 +1,7 @@
 import math
 
 
-def geodetic_to_ecef(lon, lat, h):
+def geodetic_to_ecef(lon, lath):
     lat = lat * math.pi / 180
     lon = lon * math.pi / 180
     Alpha_E = 0.335281066475e-2

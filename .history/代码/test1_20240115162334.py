@@ -1,18 +1,15 @@
 import math
 
 
-def geodetic_to_ecef(lon, lat, h):
+def geodetic_to_ecef(lat, lon, h):
     lat = lat * math.pi / 180
     lon = lon * math.pi / 180
     Alpha_E = 0.335281066475e-2
     a_E = 6378137.0
     e2 = 2 * Alpha_E - Alpha_E * Alpha_E
     w = math.sqrt(1 - e2 * math.sin(lat) * math.sin(lat))
-    N = a_E / w
-    X = (N + h) * math.cos(lat) * math.cos(lon)
-    Y = (N + h) * math.cos(lat) * math.sin(lon)
-    Z = (N * (1 - e2) + h) * math.sin(lat)
-    
+
+
 
     return X, Y, Z
 

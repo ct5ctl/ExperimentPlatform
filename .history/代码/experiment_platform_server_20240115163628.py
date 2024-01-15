@@ -328,16 +328,16 @@ async def send_message(websocket, q_pos):
 
 # ===================================线程3子任务===================================
 def geodetic_to_ecef(lon, lat, h):
-    lat = lat * Decimal(math.pi) / 180
-    lon = lon * Decimal(math.pi) / 180
+    lat = lat * math.pi / 180
+    lon = lon * math.pi / 180
     Alpha_E = 0.335281066475e-2
     a_E = 6378137.0
-    e2 = Decimal(2 * Alpha_E - Alpha_E * Alpha_E)
-    w = math.sqrt(1 - e2 * Decimal(math.sin(lat)) * Decimal(math.sin(lat)))
-    N = Decimal(a_E / w)
-    X = Decimal(N + h) * Decimal(math.cos(lat)) * Decimal(math.cos(lon))
-    Y = Decimal(N + h) * Decimal(math.cos(lat)) * Decimal(math.sin(lon))
-    Z = Decimal(N * (1 - e2) + h) * Decimal(math.sin(lat))
+    e2 = 2 * Alpha_E - Alpha_E * Alpha_E
+    w = math.sqrt(1 - e2 * math.sin(lat) * math.sin(lat))
+    N = a_E / w
+    X = (N + h) * math.cos(lat) * math.cos(lon)
+    Y = (N + h) * math.cos(lat) * math.sin(lon)
+    Z = (N * (1 - e2) + h) * math.sin(lat)
     
     return X, Y, Z
 
