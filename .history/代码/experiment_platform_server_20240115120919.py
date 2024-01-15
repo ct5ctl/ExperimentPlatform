@@ -332,8 +332,8 @@ async def send_message(websocket, q_pos):
 def send_simul_start_command(q_pos, q_theta, simula_data):
     simula_date_milliseconds = milliseconds_since_2006_01_01(simula_data.get_simula_date())
     simula_time = simula_data.get_simula_time()
-    pos_current = q_pos.get()
-    # pos_current = [100, 100, 100]
+    # pos_current = q_pos.get()
+    pos_current = [100, 100, 100]
     theta_current = q_theta.get()
     command = 0x0ABB9011
 
@@ -363,7 +363,7 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     # 合并数据帧
     full_frame = frame_header + frame_flag + frame_length_packed + alternate + frame_data
 
-
+    
     try:
         # 发送数据
         sock.sendto(full_frame, server_address)
