@@ -66,7 +66,7 @@ def milliseconds_since_2006_01_01(simula_date):
 class SimulaData:
     def __init__(self):
         self.simula_date = datetime(2020, 6, 15, 10, 0, 0)      # 仿真日期
-        self.simula_time = 360  # 仿真时间，单位：秒
+        self.simula_time = 72000  # 仿真时间，单位：秒
         self.track_time = 0  # 轨迹时间，单位：秒
         self.track_number = 0  # 轨迹序号
         
@@ -338,12 +338,16 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     command = 0x0ABB9011
 
     # 构建导航模拟启动指令
-    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(simula_date_milliseconds), int(simula_time), 0,
-                             pos_current[0], pos_current[1], pos_current[2],
-                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-                             0, 0, 0,
-                             0.0, theta_current, 0.0,
-                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    # frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(simula_date_milliseconds), int(simula_time), 0,
+    #                          pos_current[0], pos_current[1], pos_current[2], 
+    #                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+    #                          0, 0, 0,
+    #                          0.0, theta_current, 0.0,
+    #                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    frame_data = struct.pack('<qqqqddddqdddd', int(command), int(simula_date_milliseconds), int(simula_time), 0,
+                            pos_current[0], pos_current[1], pos_current[2], 0.0,
+                            0, 
+                            0.0, theta_current, 0.0, 0.0)
     
     # 创建 socket 对象
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
