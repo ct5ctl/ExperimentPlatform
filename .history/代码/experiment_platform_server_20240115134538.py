@@ -338,7 +338,7 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     command = 0x0ABB9011
 
     # 构建导航模拟启动指令
-    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(simula_date_milliseconds), int(simula_time), 0,
+    frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', command), int(simula_date_milliseconds), int(simula_time), 0,
                              pos_current[0], pos_current[1], pos_current[2], 
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
                              0, 0, 0,

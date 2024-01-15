@@ -344,6 +344,10 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
                              0, 0, 0,
                              0.0, theta_current, 0.0,
                              0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    frame_data = struct.pack('<qqqqddddqdddd', int(command), int(simula_date_milliseconds), int(simula_time), 0,
+                            pos_current[0], pos_current[1], pos_current[2], 0.0,
+                            0, 
+                            0.0, theta_current, 0.0, 0.0)
     
     # 创建 socket 对象
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
