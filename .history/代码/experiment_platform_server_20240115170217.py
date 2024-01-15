@@ -330,7 +330,7 @@ async def send_message(websocket, q_pos):
 def geodetic_to_ecef(pos_current):
     lon = pos_current[0]
     lat = pos_current[1]
-    h = 0
+    h = pos_current[2]
     lat = lat * Decimal(math.pi) / 180
     lon = lon * Decimal(math.pi) / 180
     Alpha_E = 0.335281066475e-2
@@ -448,7 +448,7 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     try:
         # 发送数据
         sock.sendto(full_frame, server_address)
-        # print("已发送轨迹数据指令 [", pos_current[0], ",", pos_current[1], ",", pos_current[2], "]")
+        print("已发送轨迹数据指令 [", pos_current[0], ",", pos_current[1], ",", pos_current[2], "]")
     except socket.error as e:
         print(f"发送数据失败: {e}")
     finally:
