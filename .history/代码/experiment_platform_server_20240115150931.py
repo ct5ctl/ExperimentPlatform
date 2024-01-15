@@ -336,9 +336,9 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     # pos_current = [100, 100, 100]
     theta_current = q_theta.get()
     command = 0x0ABB9011
-    # for i, pos in enumerate(pos_current):
-    #     pos_current[i] = float(pos_current[i])
-    #     # pos_current[i] = int(pos_current[i] * 10**10) / 10**10
+    for i, pos in enumerate(pos_current):
+        pos_current[i] = float(pos_current[i])
+        # pos_current[i] = int(pos_current[i] * 10**10) / 10**10
 
     # 构建导航模拟启动指令
     frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(simula_date_milliseconds), int(simula_time), 0,

@@ -336,9 +336,9 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     # pos_current = [100, 100, 100]
     theta_current = q_theta.get()
     command = 0x0ABB9011
-    # for i, pos in enumerate(pos_current):
-    #     pos_current[i] = float(pos_current[i])
-    #     # pos_current[i] = int(pos_current[i] * 10**10) / 10**10
+    for i, pos in pos_current:
+        pos_current[i] = float(pos_current[i])
+        # pos_current[i] = int(pos_current[i] * 10**10) / 10**10
 
     # 构建导航模拟启动指令
     frame_data = struct.pack('<qqqqddddddddddddqqqdddddddddddd', int(command), int(simula_date_milliseconds), int(simula_time), 0,
@@ -394,9 +394,10 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     # 更新轨迹时间和轨迹序号
     simula_data.update_track_data(track_time + time_slot, track_number)
     print("轨迹时间:", track_time, "轨迹序号:", track_number)
-    # for i, pos in enumerate(pos_current):
-    #     pos_current[i] = float(pos_current[i])
-    #     print(pos_current[i])
+    for i, pos in (pos_current):
+        print(type(pos_current[i]))
+        pos_current[i] = float(pos_current[i])
+        # pos_current[i] = int(pos_current[i] * 10**10) / 10**10
 
     # 构建数据帧
     command = 0x0A5A5C39  # 命令字
