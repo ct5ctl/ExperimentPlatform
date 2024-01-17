@@ -340,7 +340,7 @@ def geodetic_to_ecef(pos_current):
     
     return X, Y, Z
 
-def send_simul_start_command(q_pos, q_theta, simula_data):
+def send_simul_start_command(q_pos, q_theta, simula_data, vehicle_data):
     simula_date_milliseconds = milliseconds_since_2006_01_01(simula_data.get_simula_date())
     simula_time = simula_data.get_simula_time()
     pos_current = vehicle_data.get_pos_current()
@@ -351,6 +351,7 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
     # for i, pos in enumerate(pos_current):
     #     pos_current[i] = float(pos_current[i])
     #     # pos_current[i] = int(pos_current[i] * 10**10) / 10**10
+    # 将经纬度转换为空间直角坐标系
     x, y, z = geodetic_to_ecef(pos_current)
 
     # 构建导航模拟启动指令
@@ -532,7 +533,7 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data, vehicle_data
             # 首次执行，发送导航模拟启动指令
             time.sleep(1)
             print("首次执行，发送导航模拟启动指令")
-            send_simul_start_command(q_pos, q_theta, simula_data)
+            send_simul_start_command(q_pos, q_theta, simula_data, vehicle_data)
             flag.set() 
             time.sleep(10)
             print("开始轨迹注入")
@@ -579,8 +580,7 @@ if __name__ == "__main__":
     # 创建并启动监控线程，在导航模拟结束后发送结束指令
     monitor_thread = threading.Thread(target=monitor_process, args=(navigation_simulation_process,))
     monitor_thread.start()
-    
-    
+
 
     
 
