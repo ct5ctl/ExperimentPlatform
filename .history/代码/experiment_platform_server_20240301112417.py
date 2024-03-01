@@ -496,8 +496,7 @@ def pos_server(q_pos, q_theta, vehicle_data, log_file):
     while True:
         sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
         # 处理传感器数据，获取当前车辆位置及航向角
-        # pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
-        process_sensor_data(sensor_data, vehicle_data, log_file)  
+        pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
         # # 写入数据到队列
         # q_pos.put(pos_current)
         # q_theta.put(theta_current)
