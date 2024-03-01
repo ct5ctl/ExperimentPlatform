@@ -298,18 +298,16 @@ def process_sensor_data(sensor_data, vehicle_data, log_file):
             pos1 = vehicle_data.get_pos_current()
             pos_as_strings = [str(pos1) for pos1 in pos_current]
             file.write(f"pos_current: {pos_as_strings}, speed: {speed}, wheel_angle: {wheel_angle}\n")
-
-        return pos_current, theta_current
     else:
         print("未能获取传感器数据")
-        return vehicle_data.get_pos_current(), vehicle_data.get_theta_current() # 返回上一时刻位置和航向角
 
 # ===================================线程2子任务===================================
-async def send_message(websocket, q_pos):
+async def send_message(websocket, q_pos, vehicle_data):
     # 这里放入你的 WebSocket 发送消息逻辑
     while True:
         # 模拟获取位置和朝向数据，这里用一个固定的数据代替
-        pos_current = q_pos.get()
+        pos_current = vehicle_data.get_pos_current()
+        # pos_current = q_pos.get()
         pos_as_strings = [str(item) for item in pos_current]
         theta_current = 270
         print("websocket send message:", [list(pos_current)])
@@ -317,8 +315,6 @@ async def send_message(websocket, q_pos):
             "eventName": "eventValue",
             "data": [list(pos_as_strings)]
         }
-
-        
         
         # 发送消息给客户端
         await websocket.send(json.dumps(message))
@@ -344,16 +340,18 @@ def geodetic_to_ecef(pos_current):
     
     return X, Y, Z
 
-def send_simul_start_command(q_pos, q_theta, simula_data):
+def send_simul_start_command(q_pos, q_theta, simula_data, vehicle_data):
     simula_date_milliseconds = milliseconds_since_2006_01_01(simula_data.get_simula_date())
     simula_time = simula_data.get_simula_time()
-    pos_current = q_pos.get()
-    # pos_current = [100, 100, 100]
-    theta_current = q_theta.get()
+    pos_current = vehicle_data.get_pos_current()
+    theta_current = vehicle_data.get_theta_current()
+    # pos_current = q_pos.get()
+    # theta_current = q_theta.get()
     command = 0x0ABB9011
     # for i, pos in enumerate(pos_current):
     #     pos_current[i] = float(pos_current[i])
     #     # pos_current[i] = int(pos_current[i] * 10**10) / 10**10
+    # 将经纬度转换为空间直角坐标系
     x, y, z = geodetic_to_ecef(pos_current)
 
     # 构建导航模拟启动指令
@@ -398,8 +396,10 @@ def send_simul_start_command(q_pos, q_theta, simula_data):
 
 def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     # 获取当前数据
-    pos_current = q_pos.get()
-    theta_current = q_theta.get()
+    # pos_current = q_pos.get()
+    # theta_current = q_theta.get()
+    pos_current = vehicle_data.get_pos_current()
+    theta_current = vehicle_data.get_theta_current()
     track_number = simula_data.get_track_number() + 1
     track_time = simula_data.get_track_number() * time_slot * 1000   # 从1个时间间隙开始
     # track_time = milliseconds_since_2006_01_01(simula_data.get_simula_date())  # 从仿真时间开始 
@@ -497,18 +497,18 @@ def pos_server(q_pos, q_theta, vehicle_data, log_file):
         sensor_data = get_sensor_data()  # 调用获取传感器数据的函数
         # 处理传感器数据，获取当前车辆位置及航向角
         pos_current, theta_current = process_sensor_data(sensor_data, vehicle_data, log_file)  
-        # 写入数据到队列
-        q_pos.put(pos_current)
-        q_theta.put(theta_current)
+        # # 写入数据到队列
+        # q_pos.put(pos_current)
+        # q_theta.put(theta_current)
         # print(f"q_pos writer data:", pos_current)
         # print(f"q_theta writer data:", theta_current)
         time.sleep(time_slot)  # 等待100ms
 
 
-def start_websocket_server(q_pos):
+def start_websocket_server(q_pos, vehicle_data):
     async def echo(websocket, path):
         try:
-            await send_message(websocket, q_pos)
+            await send_message(websocket, q_pos, vehicle_data)
         except websockets.exceptions.ConnectionClosedError:
             pass
 
@@ -533,7 +533,7 @@ def navigation_simulation_server(q_pos, q_theta, flag, simula_data, vehicle_data
             # 首次执行，发送导航模拟启动指令
             time.sleep(1)
             print("首次执行，发送导航模拟启动指令")
-            send_simul_start_command(q_pos, q_theta, simula_data)
+            send_simul_start_command(q_pos, q_theta, simula_data, vehicle_data)
             flag.set() 
             time.sleep(10)
             print("开始轨迹注入")
@@ -568,9 +568,9 @@ if __name__ == "__main__":
     pos_server_process = multiprocessing.Process(target=pos_server, args=(q_pos, q_theta, vehicle_data, log_file))
     pos_server_process.start()
     
-    # # 启动websocket服务进程
-    # websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, ))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
-    # websocket_server_process.start()
+    # 启动websocket服务进程
+    websocket_server_process = multiprocessing.Process(target=start_websocket_server, args=(q_pos, vehicle_data))   # 参数的逗号不能省略！否则会被判断为一个对象而非元组
+    websocket_server_process.start()
 
     flag = multiprocessing.Event()
     flag.clear()  
@@ -580,8 +580,7 @@ if __name__ == "__main__":
     # 创建并启动监控线程，在导航模拟结束后发送结束指令
     monitor_thread = threading.Thread(target=monitor_process, args=(navigation_simulation_process,))
     monitor_thread.start()
-    
-    
+
 
     
 
