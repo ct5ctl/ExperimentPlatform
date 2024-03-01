@@ -441,10 +441,7 @@ def send_track_data_command(q_pos, q_theta, simula_data, vehicle_data):
     # 合并数据帧
     full_frame = frame_header + frame_flag + frame_length_packed + alternate + frame_data
 
-    # # 将 full_frame 的内容以十六进制形式存储在文本文件中
-    # with open('frame_data_hex.txt', 'a') as file:  # 'a' 用于追加到文件
-    #     hex_data = full_frame.hex()  # 将二进制数据转换为十六进制字符串
-    #     file.write('---------' + hex_data + '\n')  # 将十六进制字符串写入文件
+    # 将 full_frame 的内容以十六进制形式存储在文本文件中/
     try:
         # 发送数据
         sock.sendto(full_frame, server_address)
