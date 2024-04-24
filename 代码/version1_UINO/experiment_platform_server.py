@@ -580,6 +580,7 @@ if __name__ == "__main__":
     # 创建并启动监控线程，在导航模拟结束后发送结束指令
     monitor_thread = threading.Thread(target=monitor_process, args=(navigation_simulation_process,))
     monitor_thread.start()
+    
 
 
     
